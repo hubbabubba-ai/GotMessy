@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `README.md` — a single-line placeholder (`# GotMessy`).
 - `Final.zip` — a bundle of brand assets and standalone HTML/PDF deliverables for the **Got Messy** brand (an AI tool for "real people with real chaos" — messy notes, half-finished ideas, drafts that need to sound professional).
+- `.github/workflows/blank.yml` — a **placeholder** GitHub Actions workflow that only runs `echo Hello, world!` on push/PR to `main`. It is not a real build or test; do not treat a green check here as validation of anything. Replace it (don't extend it) when actual CI is needed.
+- `.claude/settings.json` — enables the `superpowers@claude-plugins-official` plugin for this repo.
 
 Treat this repo as a brand/design package until code is added. Do not invent build, lint, or test commands; none exist.
 
@@ -67,8 +69,9 @@ Pulled from the inline CSS `:root` block in the HTML deliverables — keep these
 
 ## Workflow conventions
 
-- **Branch**: develop on `claude/add-claude-documentation-gXwtx` (or whatever branch the task explicitly assigns). Never push elsewhere without explicit permission.
-- **Commits**: previous commits are terse (`Initial commit`, `Add files via upload`). When introducing actual code or restructured assets, switch to descriptive messages explaining the *why*.
+- **Branch**: develop on whatever `claude/...` branch the task explicitly assigns (e.g. past sessions used `claude/add-claude-documentation-gXwtx`, `claude/install-superpowers-plugin-t4hXQ`). Never push to `main` or to a different session's branch without explicit permission.
+- **Commits**: the early history has terse messages (`Initial commit`, `Add files via upload`); more recent merged work uses descriptive ones (`Add CLAUDE.md with brand-asset repo overview`, `Add basic CI workflow configuration`, `Enable superpowers plugin from claude-plugins-official`). Match the descriptive style — explain the *why*, not just the *what*.
+- **PRs**: changes land on `main` via PRs from `claude/...` branches (see merged PRs #1, #2). Open new work as a draft PR after the first push.
 - **GitHub scope**: MCP tools are restricted to `hubbabubba-ai/gotmessy`.
 
 ## When code does land here
