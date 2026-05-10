@@ -15,11 +15,37 @@ This is a repo in the **hubbabubba-ai** GitHub organisation for the **Got Messy*
 | `Final/` | Extracted bundle — tracked on `claude/brand-guidelines-system-design`, not yet on the default branch |
 | `docs/brand-guidelines.md` | Operational brand rules (on `claude/brand-guidelines-system-design`) |
 | `docs/system-design.md` | Full system architecture document (on `claude/brand-guidelines-system-design`) |
-| `.github/workflows/blank.yml` | **Placeholder CI** — runs `echo Hello, world!` only; a green check here validates nothing |
-| `.github/workflows/static.yml` | **Real deployment** — publishes the entire repo to GitHub Pages on every push to the default branch |
+| `.github/workflows/quality.yml` | **Quality CI** — HTML validation, link check, accessibility (pa11y, WCAG 2.1 AA), Markdown lint, brand-rule lint, brand-token drift, asset-pair check. See "Quality checks" below. |
+| `.github/workflows/static.yml` | **Real deployment** — publishes `_site/` (only `index.html`, `Final/`, `docs/`) to GitHub Pages on every push to the default branch |
+| `index.html` | Landing page deployed at the Pages root; links to the brand guidelines and system design deliverables |
+| `scripts/brand-lint.sh` | Forbidden-words / forbidden-colors / exclamation-budget checker (rules sourced from this file) |
+| `scripts/check-token-drift.py` | Asserts brand-token table here matches the `:root` block in each HTML deliverable |
 | `.claude/settings.json` | Enables the `superpowers@claude-plugins-official` plugin |
 
-Treat this repo as a brand/design package until application code is added. **Do not invent build, lint, or test commands** — none exist.
+Treat this repo as a brand/design package until application code is added. The build/lint/test surface today is asset-quality only — see "Quality checks" below.
+
+## Quality checks
+
+`quality.yml` runs on every push and PR to `main`. To reproduce locally from the repo root:
+
+```bash
+npx html-validate "Final/**/*.html" "index.html"
+npx markdownlint-cli2 "docs/**/*.md" "CLAUDE.md"
+bash scripts/brand-lint.sh
+python3 scripts/check-token-drift.py
+# Link check (requires lychee):
+npx lychee --no-progress --exclude-mail --accept 200,206,403,429 'Final/**/*.html' 'docs/**/*.md' 'index.html' 'CLAUDE.md'
+# Accessibility audit (serves repo on :8080 then audits):
+npx http-server -p 8080 -s & sleep 1 && npx pa11y-ci --config .pa11yci ; kill %1
+```
+
+Brand-rule details:
+
+- **Forbidden words** (case-insensitive, word-boundary): `journey`, `unlock`, `unleash`, `supercharge`, `empower`, `AI-powered`, `cutting-edge`, `leverage`, `learning curve`. Per-line override: append `<!-- brand-lint-allow -->` to the line (e.g. cautionary "Never" examples in `docs/brand-guidelines.md`).
+- **Forbidden colors**: pure white (`#FFF`/`#FFFFFF`) and pure black (`#000`/`#000000`) in HTML/CSS contexts. Use `--cream` / `--ink` instead.
+- **Exclamation budget**: at most one `!` per HTML page (excluding `!important`, `!=`, `!DOCTYPE`, comments, and `brand-lint-allow` lines).
+- **Token drift**: every token listed in the colour table below must match the `:root { ... }` block in `Final/*.html`. The HTML is the source of truth — when they diverge, update CLAUDE.md.
+- **Asset-pair check**: every working asset (`logo-A.png`, etc.) must have a `-final` sibling. Skipped silently if `Final/` contains only HTML.
 
 ## Related repositories
 
@@ -165,11 +191,10 @@ Never use: *journey*, *unlock*, *unleash*, *supercharge*, *empower* (as filler),
 
 ## When application code lands
 
-No build or test tooling exists yet. When code is added:
+Asset-quality CI exists today (see "Quality checks"). When code is added:
 
 1. Update this file with actual commands: build, test, lint, run-dev, run-single-test.
 2. Add a short architecture overview for what has actually been built (distinct from the planned architecture above).
-3. Replace `blank.yml` with real CI — do not extend the placeholder.
-4. Scope `static.yml` to a build output directory rather than the whole repo root.
-5. If a `packages/tokens/` shared package is added (per system design), document how to regenerate tokens from the brand kit's CSS `:root` block.
-6. Document the IdP choice (Clerk vs Auth0) and any env vars required once the decision is made.
+3. Add real test/build steps to `quality.yml` (or split into a separate `tests.yml`).
+4. If a `packages/tokens/` shared package is added (per system design), document how to regenerate tokens from the brand kit's CSS `:root` block.
+5. Document the IdP choice (Clerk vs Auth0) and any env vars required once the decision is made.

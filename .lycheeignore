@@ -1,0 +1,8 @@
+# Patterns for URLs lychee should not check (regex, one per line).
+#
+# Brand assets that live on the `claude/brand-guidelines-system-design` branch
+# but not yet on the default branch. The two HTML deliverables on `main`
+# reference them as cross-links; remove these entries when the bundle merges.
+gotmessy-brand-kit-final\.html$
+gotmessy-hub\.html$
+prompt-architect-infographic-final\.html$

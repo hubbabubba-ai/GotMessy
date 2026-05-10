@@ -12,7 +12,7 @@ If anything here contradicts the kit, the kit wins. Update both together.
 
 The wordmark is a single typographic lockup, not three separate elements:
 
-```
+```text
 got Messy.
 └─┬─┘ └─┬─┘ └┬┘
   │     │    └─ Clay terminal dot — never any other colour
@@ -140,6 +140,7 @@ The kit defines the families (Lora serif, Poppins sans). The rules below cover *
 ### Italics
 
 Italic Lora is the *brand inflection* — use it for:
+
 - The word "Got" in the wordmark.
 - One emphasised noun per heading where it lifts the line ("You already know what *great output looks like.*").
 - Pull quotes.
@@ -162,25 +163,27 @@ The kit states the personality in a single line: *"a brilliant friend who happen
 
 ### Always / never
 
+<!-- brand-lint-allow: table rows below quote forbidden vocabulary as cautionary "Never" examples -->
 | Always | Never |
 |---|---|
-| "You already know what good looks like." | "Unleash your AI superpowers!" |
-| "Drop your mess in." | "Begin your prompt-engineering journey." |
+| "You already know what good looks like." | <!-- brand-lint-allow -->"Unleash your AI superpowers!" |
+| "Drop your mess in." | <!-- brand-lint-allow -->"Begin your prompt-engineering journey." |
 | "We'll sort the structure." | "Let our advanced NLP pipeline analyse..." |
-| "Save it. Re-use it tomorrow." | "Empower your workflow at scale." |
-| Plain present tense, second person | Future tense, marketing-deck future-perfect ("you will have unlocked") |
+| "Save it. Re-use it tomorrow." | <!-- brand-lint-allow -->"Empower your workflow at scale." |
+| Plain present tense, second person | <!-- brand-lint-allow -->Future tense, marketing-deck future-perfect ("you will have unlocked") |
 | Contractions ("you're", "we'll") | Stiff full forms in UI copy |
 | Acknowledge the mess as normal | Apologise for the mess or imply the user "needs help" |
 
 ### Do not use
 
 These words are *off-brand* in product UI and marketing copy:
-- *journey*, *unlock*, *unleash*, *supercharge*, *next-level*, *game-changer*
-- *empower*, *enable* (when used as marketing filler)
-- *AI-powered* (we know — say what it does)
-- *cutting-edge*, *state-of-the-art*
-- *leverage* (as a verb)
-- *learning curve* — the brand explicitly rejects this framing
+<!-- brand-lint-allow: bullet list below enumerates the forbidden vocabulary itself -->
+- *journey*, *unlock*, *unleash*, *supercharge*, *next-level*, *game-changer* <!-- brand-lint-allow -->
+- *empower*, *enable* (when used as marketing filler) <!-- brand-lint-allow -->
+- *AI-powered* (we know — say what it does) <!-- brand-lint-allow -->
+- *cutting-edge*, *state-of-the-art* <!-- brand-lint-allow -->
+- *leverage* (as a verb) <!-- brand-lint-allow -->
+- *learning curve* — the brand explicitly rejects this framing <!-- brand-lint-allow -->
 
 ### Tone by surface
 
