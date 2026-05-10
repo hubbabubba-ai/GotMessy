@@ -31,13 +31,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Assemble _site/
+        # Publish only the public-facing files. Excludes Final.zip (1.9 MB binary),
+        # CLAUDE.md, .github/, scripts/, and dotfiles — none of which need to be
+        # publicly browseable.
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          cp -R Final _site/Final
+          cp -R docs _site/docs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: '_site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5

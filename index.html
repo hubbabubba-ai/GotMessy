@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Got Messy — Asset Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1612;--ink-soft:#3D3530;
+  --dust:#C4B5A0;--clay:#C4673A;--clay-lt:#E8896A;
+  --card:#1E1A16;--card-bd:rgba(255,255,255,0.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--ink);color:var(--cream);font-family:'Poppins',sans-serif;line-height:1.6}
+main{max-width:720px;margin:0 auto;padding:80px 32px 64px}
+.brand{font-family:'Lora',serif;font-size:1.5rem;margin-bottom:8px}
+.brand .got{font-style:italic;font-weight:400;color:var(--dust);font-size:1rem}
+.brand .messy{font-weight:700}
+.brand .dot{color:var(--clay)}
+h1{font-family:'Lora',serif;font-weight:700;font-size:clamp(2rem,5vw,3rem);line-height:1.1;margin:24px 0 16px}
+p.lede{color:var(--dust);font-size:1.05rem;margin-bottom:48px}
+ul{list-style:none;display:grid;gap:16px}
+li a{display:block;padding:20px 24px;background:var(--card);border:1px solid var(--card-bd);border-radius:12px;color:var(--cream);text-decoration:none;transition:border-color .18s,background .18s}
+li a:hover,li a:focus{border-color:var(--clay-lt);background:var(--ink-soft);outline:none}
+li a:focus-visible{outline:2px solid var(--clay-lt);outline-offset:2px}
+li a strong{display:block;font-family:'Lora',serif;font-size:1.15rem;margin-bottom:4px}
+li a span{color:var(--dust);font-size:0.9rem}
+footer{margin-top:64px;color:var(--dust);font-size:0.85rem}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><span class="got">got</span><span class="messy">Messy</span><span class="dot">.</span></div>
+  <h1>Brand &amp; system deliverables</h1>
+  <p class="lede">Source-of-truth documents for the Got Messy brand and the planned application architecture.</p>
+
+  <ul>
+    <li>
+      <a href="Final/gotmessy-brand-guidelines.html">
+        <strong>Brand guidelines</strong>
+        <span>Logo, colour, typography, voice rules</span>
+      </a>
+    </li>
+    <li>
+      <a href="Final/gotmessy-system-design.html">
+        <strong>System design</strong>
+        <span>Architecture, surfaces, build phases</span>
+      </a>
+    </li>
+  </ul>
+
+  <footer>Maintained on <code>hubbabubba-ai/gotmessy</code>.</footer>
+</main>
+</body>
+</html>

@@ -25,7 +25,7 @@ The Architect is the core engine. Everything else is scaffolding around it.
 
 ## 2. Architecture at a glance
 
-```
+```text
 ┌───────────────────────────────────────────────────────────────────┐
 │                        Mobile / Web Client                        │
 │   (React Native + React Native Web, or Expo + Next.js shell)      │
@@ -91,7 +91,7 @@ The BFF *does not* call LLM providers directly — it always goes through the LL
 
 Implements the Smart Paste flow from the infographic:
 
-```
+```text
 The Drop  →  Intent Classifier  →  Sanity Check (PII)  →  Pillar Mapping
 ```
 
@@ -115,7 +115,7 @@ Owns the lifecycle of a *Prompt Draft*:
 
 State machine for a draft:
 
-```
+```text
 empty → drafting → ready (3 pillars filled) → flight_pending → flight_done → exported
                             ▲                                     │
                             └─────────── revise ──────────────────┘
@@ -146,7 +146,7 @@ User identity = IdP `sub`. We store our own user row keyed on that, never the em
 
 Postgres (Neon or Supabase) with `pgvector` for embeddings.
 
-```
+```text
 users              prompt_drafts             vault_templates
 ─────              ─────────────             ───────────────
 id (pk)            id (pk)                   id (pk)
