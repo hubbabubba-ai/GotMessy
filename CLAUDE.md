@@ -86,7 +86,7 @@ Read `docs/system-design.md` (on `claude/brand-guidelines-system-design`) for th
 | Client | React Native (Expo) + React Native Web; Next.js for `gotmessy.com` marketing |
 | API Gateway / BFF | Hono on Cloudflare Workers (or Next.js API routes) |
 | Database | Postgres (Neon or Supabase) + pgvector for embeddings |
-| Identity | Clerk or Auth0 (external IdP) |
+| Identity | **Clerk** (chosen — see "Identity" below) |
 | LLM providers | Gemini, OpenAI, Anthropic — user-selectable + BYOK |
 | Object storage | S3 / Cloudflare R2 |
 | Observability | OpenTelemetry + Sentry |
@@ -230,6 +230,26 @@ Then update the CLAUDE.md colour table to match. The drift check will catch any 
 
 **Adding a new token:** add it to the HTML `:root` block first (source of truth), run `generate-tokens.py`, then update the CLAUDE.md colour table row.
 
+## Identity (Clerk)
+
+**Clerk** is the chosen IdP. Decision rationale: best-in-class React Native / Expo support, pre-built UI components (magic links, social login, MFA), generous free tier (10k MAUs), and no self-hosted infrastructure to maintain.
+
+**Environment variables** — copy `.env.example` → `.env.local` (never commit `.env.local`):
+
+| Variable | Where used | Notes |
+|---|---|---|
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Next.js web | Safe for browser bundles |
+| `CLERK_SECRET_KEY` | Next.js server / API routes | Keep server-side only |
+| `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` | Expo / React Native | Prefix required by Expo |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | Next.js | Default `/sign-in` |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | Next.js | Default `/sign-up` |
+| `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL` | Next.js | Post-auth redirect |
+| `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL` | Next.js | Post-auth redirect |
+
+Get API keys from [dashboard.clerk.com](https://dashboard.clerk.com) → your app → API Keys.
+
+**When adding Clerk to a new package/app:** install `@clerk/nextjs` (web) or `@clerk/clerk-expo` (mobile). Wrap the root layout in `<ClerkProvider publishableKey={…}>`. Protect routes with Clerk's `auth()` middleware (Next.js) or `useAuth()` hook (Expo).
+
 ## When application code lands
 
 Asset-quality CI exists today (see "Quality checks"). When code is added:
@@ -238,4 +258,4 @@ Asset-quality CI exists today (see "Quality checks"). When code is added:
 2. Add a short architecture overview for what has actually been built (distinct from the planned architecture above).
 3. Add real test/build steps to `quality.yml` (or split into a separate `tests.yml`).
 4. ~~If a `packages/tokens/` shared package is added~~ Done — see "Tokens package" below.
-5. Document the IdP choice (Clerk vs Auth0) and any env vars required once the decision is made.
+5. ~~Document the IdP choice (Clerk vs Auth0) and any env vars required~~ Done — see "Identity (Clerk)" above.
