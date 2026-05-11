@@ -10,6 +10,7 @@
   "urls": [
     "http://localhost:8080/index.html",
     "http://localhost:8080/Final/gotmessy-brand-guidelines.html",
-    "http://localhost:8080/Final/gotmessy-system-design.html"
+    "http://localhost:8080/Final/gotmessy-system-design.html",
+    "http://localhost:8080/Final/prompt-architect-infographic.html"
   ]
 }
