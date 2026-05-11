@@ -19,7 +19,9 @@ This is a repo in the **hubbabubba-ai** GitHub organisation for the **Got Messy*
 | `.github/workflows/static.yml` | **Real deployment** — publishes `_site/` (only `index.html`, `Final/`, `docs/`) to GitHub Pages on every push to the default branch |
 | `index.html` | Landing page deployed at the Pages root; links to the brand guidelines and system design deliverables |
 | `scripts/brand-lint.sh` | Forbidden-words / forbidden-colors / exclamation-budget checker (rules sourced from this file) |
-| `scripts/check-token-drift.py` | Asserts brand-token table here matches the `:root` block in each HTML deliverable |
+| `scripts/check-token-drift.py` | Asserts brand-token table here matches the `:root` block in each HTML deliverable **and** the TS package |
+| `scripts/generate-tokens.py` | Regenerates `packages/tokens/src/colors.ts` and `css.ts` from the HTML source of truth |
+| `packages/tokens/` | Shared design-token package (`@gotmessy/tokens`) — see "Tokens package" below |
 | `.claude/settings.json` | Enables the `superpowers@claude-plugins-official` plugin |
 
 Treat this repo as a brand/design package until application code is added. The build/lint/test surface today is asset-quality only — see "Quality checks" below.
@@ -44,7 +46,7 @@ Brand-rule details:
 - **Forbidden words** (case-insensitive, word-boundary): `journey`, `unlock`, `unleash`, `supercharge`, `empower`, `AI-powered`, `cutting-edge`, `leverage`, `learning curve`. Per-line override: append `<!-- brand-lint-allow -->` to the line (e.g. cautionary "Never" examples in `docs/brand-guidelines.md`).
 - **Forbidden colors**: pure white (`#FFF`/`#FFFFFF`) and pure black (`#000`/`#000000`) in HTML/CSS contexts. Use `--cream` / `--ink` instead.
 - **Exclamation budget**: at most one `!` per HTML page (excluding `!important`, `!=`, `!DOCTYPE`, comments, and `brand-lint-allow` lines).
-- **Token drift**: every token listed in the colour table below must match the `:root { ... }` block in `Final/*.html`. The HTML is the source of truth — when they diverge, update CLAUDE.md.
+- **Token drift**: every token in the colour table below must match (1) the `:root { ... }` block in each `Final/*.html`, (2) the `colors` object in `packages/tokens/src/colors.ts`, and (3) the `:root` block in `packages/tokens/src/css.ts`. The HTML is the source of truth — when they diverge, run `python3 scripts/generate-tokens.py` to regenerate the TS package, then update CLAUDE.md.
 - **Asset-pair check**: every working asset (`logo-A.png`, etc.) must have a `-final` sibling. Skipped silently if `Final/` contains only HTML.
 
 ## Related repositories
@@ -189,6 +191,45 @@ Never use: *journey*, *unlock*, *unleash*, *supercharge*, *empower* (as filler),
 - **Paired docs**: `docs/brand-guidelines.md` and `Final/gotmessy-brand-guidelines.html` are paired — update both together. Same for `docs/system-design.md` and `Final/gotmessy-system-design.html`. If anything contradicts the Brand Identity Kit (`gotmessy-brand-kit-final.html`), the Kit wins — update both.
 - **GitHub scope**: MCP tools in this session are restricted to the `hubbabubba-ai` repos listed in "Related repositories" above.
 
+## Tokens package
+
+`packages/tokens/` holds the shared `@gotmessy/tokens` package — the single place all app code imports brand values from.
+
+**File layout:**
+
+| File | Purpose |
+|---|---|
+| `src/colors.ts` | `colors` object (camelCase keys), `ColorToken` type, `accentTokens`, `ACCENT_BUDGET` |
+| `src/typography.ts` | `fonts`, `fontWeights`, `typeScale`, `lineHeights`, `wordmark` |
+| `src/css.ts` | `cssVars` — the full `:root { … }` string for web injection |
+| `src/index.ts` | Barrel re-export |
+| `package.json` | `@gotmessy/tokens`, `"type": "module"`, no build step (source TypeScript) |
+| `tsconfig.json` | `NodeNext` module resolution, strict mode |
+
+**Importing in app code:**
+
+```ts
+import { colors, typeScale, cssVars } from '@gotmessy/tokens';
+
+// React Native style sheet
+const styles = StyleSheet.create({
+  heading: { fontFamily: typeScale.h1.font, fontSize: typeScale.h1.px, color: colors.cream },
+});
+
+// Web / Next.js — inject CSS vars once at the root
+<style>{cssVars}</style>
+```
+
+**Regenerating tokens** (after editing the HTML source of truth):
+
+```bash
+python3 scripts/generate-tokens.py   # rewrites colors.ts and css.ts
+```
+
+Then update the CLAUDE.md colour table to match. The drift check will catch any mismatch in CI.
+
+**Adding a new token:** add it to the HTML `:root` block first (source of truth), run `generate-tokens.py`, then update the CLAUDE.md colour table row.
+
 ## When application code lands
 
 Asset-quality CI exists today (see "Quality checks"). When code is added:
@@ -196,5 +237,5 @@ Asset-quality CI exists today (see "Quality checks"). When code is added:
 1. Update this file with actual commands: build, test, lint, run-dev, run-single-test.
 2. Add a short architecture overview for what has actually been built (distinct from the planned architecture above).
 3. Add real test/build steps to `quality.yml` (or split into a separate `tests.yml`).
-4. If a `packages/tokens/` shared package is added (per system design), document how to regenerate tokens from the brand kit's CSS `:root` block.
+4. ~~If a `packages/tokens/` shared package is added~~ Done — see "Tokens package" below.
 5. Document the IdP choice (Clerk vs Auth0) and any env vars required once the decision is made.
