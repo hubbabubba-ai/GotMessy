@@ -10,18 +10,21 @@ This is a repo in the **hubbabubba-ai** GitHub organisation for the **Got Messy*
 
 | Path | Description |
 |---|---|
-| `README.md` | Single-line placeholder (`# GotMessy`) |
-| `Final.zip` | Brand-asset bundle (~1.9 MB, 44 files) |
-| `Final/` | Extracted bundle — tracked on `claude/brand-guidelines-system-design`, not yet on the default branch |
-| `docs/brand-guidelines.md` | Operational brand rules (on `claude/brand-guidelines-system-design`) |
-| `docs/system-design.md` | Full system architecture document (on `claude/brand-guidelines-system-design`) |
-| `.github/workflows/quality.yml` | **Quality CI** — HTML validation, link check, accessibility (pa11y, WCAG 2.1 AA), Markdown lint, brand-rule lint, brand-token drift, asset-pair check. See "Quality checks" below. |
-| `.github/workflows/static.yml` | **Real deployment** — publishes `_site/` (only `index.html`, `Final/`, `docs/`) to GitHub Pages on every push to the default branch |
-| `index.html` | Landing page deployed at the Pages root; links to the brand guidelines and system design deliverables |
+| `README.md` | Project overview — deliverables index, CI quick-start |
+| `index.html` | Landing page deployed at the Pages root; links to all HTML deliverables |
+| `Final/` | Brand-asset directory — HTML deliverables, logos, reference sheets |
+| `docs/brand-guidelines.md` | Operational brand rules |
+| `docs/system-design.md` | Full system architecture document |
+| `docs/app-structure.md` | App surfaces, Architect phases, feature priority — paired with `Final/prompt-architect-infographic-final.html` |
+| `packages/tokens/` | Shared design-token package (`@gotmessy/tokens`) — see "Tokens package" below |
+| `package.json` | npm workspaces root (`packages/*`); node ≥20 engine pin |
+| `tsconfig.json` | Root TypeScript config — bundler resolution, `react-native` JSX, `@gotmessy/tokens` path alias |
+| `.env.example` | Environment variable template — Clerk keys (Next.js + Expo), LLM providers, database, R2 |
 | `scripts/brand-lint.sh` | Forbidden-words / forbidden-colors / exclamation-budget checker (rules sourced from this file) |
 | `scripts/check-token-drift.py` | Asserts brand-token table here matches the `:root` block in each HTML deliverable **and** the TS package |
 | `scripts/generate-tokens.py` | Regenerates `packages/tokens/src/colors.ts` and `css.ts` from the HTML source of truth |
-| `packages/tokens/` | Shared design-token package (`@gotmessy/tokens`) — see "Tokens package" below |
+| `.github/workflows/quality.yml` | **Quality CI** — TypeScript typecheck, HTML validation, link check, accessibility (pa11y, WCAG 2.1 AA), Markdown lint, brand-rule lint, brand-token drift, asset-pair check |
+| `.github/workflows/static.yml` | **Deployment** — publishes `index.html`, `Final/`, and `docs/` to GitHub Pages on every push to the default branch |
 | `.claude/settings.json` | Enables the `superpowers@claude-plugins-official` plugin |
 
 Treat this repo as a brand/design package until application code is added. The build/lint/test surface today is asset-quality only — see "Quality checks" below.
