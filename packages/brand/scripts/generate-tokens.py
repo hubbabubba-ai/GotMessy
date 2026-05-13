@@ -14,8 +14,8 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-HTML_GLOB = "Final/*.html"
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+HTML_GLOB = "packages/brand/Final/*.html"
 COLORS_OUT = REPO_ROOT / "packages/tokens/src/colors.ts"
 CSS_OUT = REPO_ROOT / "packages/tokens/src/css.ts"
 

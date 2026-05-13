@@ -1,0 +1,12 @@
+{
+  "name": "@gotmessy/brand",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Got Messy brand assets — HTML deliverables, documentation, and Pages site",
+  "scripts": {
+    "lint:html":   "npx html-validate@9 \"Final/**/*.html\" \"index.html\"",
+    "lint:brand":  "bash scripts/brand-lint.sh",
+    "check:drift": "python3 scripts/check-token-drift.py",
+    "generate":    "python3 scripts/generate-tokens.py"
+  }
+}

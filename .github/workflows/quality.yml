@@ -37,26 +37,26 @@ jobs:
         run: npm --workspace packages/tokens exec -- tsc --noEmit
 
       - name: HTML validation
-        run: npx --yes html-validate@9 "Final/**/*.html" "index.html"
+        run: npx --yes html-validate@9 "packages/brand/Final/**/*.html" "packages/brand/index.html"
 
       - name: Markdown lint
-        run: npx --yes markdownlint-cli2@0.13 "docs/**/*.md" "CLAUDE.md"
+        run: npx --yes markdownlint-cli2@0.13 "packages/brand/docs/**/*.md" "CLAUDE.md" "README.md"
 
       - name: Brand-rule lint
-        run: bash scripts/brand-lint.sh
+        run: bash packages/brand/scripts/brand-lint.sh
 
       - name: Brand-token drift
-        run: python3 scripts/check-token-drift.py
+        run: python3 packages/brand/scripts/check-token-drift.py
 
       - name: Asset-pair check
         run: |
           shopt -s nullglob
           fail=0
-          for f in Final/*.{png,svg,jpg,jpeg,pdf}; do
+          for f in packages/brand/Final/*.{png,svg,jpg,jpeg,pdf}; do
             [[ -e "$f" ]] || continue
             base="${f%.*}"
             ext="${f##*.}"
-            [[ "$base" == *-final ]] && continue
+            [[ "$base" == *"-final" ]] && continue
             sibling="${base}-final.${ext}"
             if [[ ! -e "$sibling" ]]; then
               echo "$f: missing canonical sibling $sibling (-final is the shippable source of truth)"
@@ -72,9 +72,9 @@ jobs:
             --no-progress
             --exclude-mail
             --accept 200,206,403,429
-            'Final/**/*.html'
-            'docs/**/*.md'
-            'index.html'
+            'packages/brand/Final/**/*.html'
+            'packages/brand/docs/**/*.md'
+            'packages/brand/index.html'
             'CLAUDE.md'
           fail: true
 
