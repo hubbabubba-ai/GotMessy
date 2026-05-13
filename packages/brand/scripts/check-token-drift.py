@@ -14,9 +14,9 @@ import re
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 CLAUDE_MD = REPO_ROOT / "CLAUDE.md"
-HTML_GLOB = "Final/*.html"
+HTML_GLOB = "packages/brand/Final/*.html"
 COLORS_TS = REPO_ROOT / "packages/tokens/src/colors.ts"
 CSS_TS = REPO_ROOT / "packages/tokens/src/css.ts"
 

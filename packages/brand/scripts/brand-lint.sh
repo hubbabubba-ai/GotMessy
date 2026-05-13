@@ -14,7 +14,7 @@
 
 set -uo pipefail
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 cd "$REPO_ROOT"
 
 violations=0
@@ -25,8 +25,8 @@ forbidden_words=(
 )
 
 scan_paths=()
-[[ -d Final ]] && while IFS= read -r f; do scan_paths+=("$f"); done < <(find Final -type f \( -name "*.html" -o -name "*.md" \))
-[[ -d docs ]]  && while IFS= read -r f; do scan_paths+=("$f"); done < <(find docs  -type f -name "*.md")
+[[ -d packages/brand/Final ]] && while IFS= read -r f; do scan_paths+=("$f"); done < <(find packages/brand/Final -type f \( -name "*.html" -o -name "*.md" \))
+[[ -d packages/brand/docs ]]  && while IFS= read -r f; do scan_paths+=("$f"); done < <(find packages/brand/docs  -type f -name "*.md")
 
 if [[ ${#scan_paths[@]} -eq 0 ]]; then
   echo "brand-lint: no files to scan"

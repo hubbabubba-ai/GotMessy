@@ -11,7 +11,7 @@
     }
   },
   "scripts": {
-    "generate": "python3 ../../scripts/generate-tokens.py",
+    "generate": "python3 ../brand/scripts/generate-tokens.py",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

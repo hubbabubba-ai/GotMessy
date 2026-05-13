@@ -32,14 +32,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Assemble _site/
-        # Publish only the public-facing files. Excludes Final.zip (1.9 MB binary),
-        # CLAUDE.md, .github/, scripts/, and dotfiles — none of which need to be
-        # publicly browseable.
+        # Publish only the public-facing files from packages/brand/.
+        # CLAUDE.md, .github/, and dotfiles are excluded — not publicly needed.
         run: |
           mkdir -p _site
-          cp index.html _site/
-          cp -R Final _site/Final
-          cp -R docs _site/docs
+          cp packages/brand/index.html _site/
+          cp -R packages/brand/Final _site/Final
+          cp -R packages/brand/docs _site/docs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
