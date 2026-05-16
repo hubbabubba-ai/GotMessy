@@ -10,7 +10,8 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@gotmessy/tokens": ["./packages/tokens/src/index.ts"]
+      "@gotmessy/tokens": ["./packages/tokens/src/index.ts"],
+      "@gotmessy/prompts": ["./packages/prompts/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "packages"]
