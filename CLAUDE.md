@@ -12,7 +12,7 @@ This is a repo in the **hubbabubba-ai** GitHub organisation for the **Got Messy*
 |---|---|
 | `README.md` | Project overview — deliverables index, CI quick-start |
 | `package.json` | npm workspaces root (`packages/*`); node ≥20 engine pin |
-| `tsconfig.json` | Root TypeScript config — bundler resolution, `react-native` JSX, `@gotmessy/tokens` path alias |
+| `tsconfig.json` | Root TypeScript config — bundler resolution, `react-native` JSX, `@gotmessy/tokens` and `@gotmessy/prompts` path aliases |
 | `.env.example` | Environment variable template — Clerk keys (Next.js + Expo), LLM providers, database, R2 |
 | `packages/brand/` | Brand-asset workspace package (`@gotmessy/brand`) — see below |
 | `packages/brand/index.html` | Landing page deployed at the Pages root; links to all HTML deliverables |
@@ -20,10 +20,12 @@ This is a repo in the **hubbabubba-ai** GitHub organisation for the **Got Messy*
 | `packages/brand/docs/brand-guidelines.md` | Operational brand rules |
 | `packages/brand/docs/system-design.md` | Full system architecture document |
 | `packages/brand/docs/app-structure.md` | App surfaces, Architect phases, feature priority — paired with `packages/brand/Final/prompt-architect-infographic-final.html` |
+| `packages/brand/docs/prompts/ai-strategy-analyst.md` | Deployment notes and metadata for the AI Strategy Analyst prompt variant |
 | `packages/brand/scripts/brand-lint.sh` | Forbidden-words / forbidden-colors / exclamation-budget checker (rules sourced from this file) |
 | `packages/brand/scripts/check-token-drift.py` | Asserts brand-token table here matches the `:root` block in each HTML deliverable **and** the TS package |
 | `packages/brand/scripts/generate-tokens.py` | Regenerates `packages/tokens/src/colors.ts` and `css.ts` from the HTML source of truth |
 | `packages/tokens/` | Shared design-token package (`@gotmessy/tokens`) — see "Tokens package" below |
+| `packages/prompts/` | System prompt workspace package (`@gotmessy/prompts`) — see "Prompts package" below |
 | `.github/workflows/quality.yml` | **Quality CI** — TypeScript typecheck, HTML validation, link check, accessibility (pa11y, WCAG 2.1 AA), Markdown lint, brand-rule lint, brand-token drift, asset-pair check |
 | `.github/workflows/static.yml` | **Deployment** — publishes `packages/brand/index.html`, `Final/`, and `docs/` to GitHub Pages on every push to the default branch |
 | `.claude/settings.json` | Enables the `superpowers@claude-plugins-official` plugin |
@@ -228,6 +230,36 @@ python3 packages/brand/scripts/generate-tokens.py   # rewrites colors.ts and css
 Then update the CLAUDE.md colour table to match. The drift check will catch any mismatch in CI.
 
 **Adding a new token:** add it to the HTML `:root` block first (source of truth), run `generate-tokens.py`, then update the CLAUDE.md colour table row.
+
+## Prompts package
+
+`packages/prompts/` holds the `@gotmessy/prompts` package — built-in system prompts for the Architect tool variants and future Analyze surfaces.
+
+**File layout:**
+
+| File | Purpose |
+|---|---|
+| `src/ai-strategy-analyst.ts` | `AI_STRATEGY_ANALYST_SYSTEM_PROMPT` string, `AI_STRATEGY_ANALYST_CONFIG` object, `PromptConfig` interface, `AnalystMode` type |
+| `src/index.ts` | Barrel re-export |
+| `package.json` | `@gotmessy/prompts`, `"type": "module"`, no build step (source TypeScript) |
+| `tsconfig.json` | `NodeNext` module resolution, strict mode |
+
+**Importing in app code:**
+
+```ts
+import { AI_STRATEGY_ANALYST_CONFIG } from '@gotmessy/prompts';
+
+// Pass to the LLM Gateway
+const response = await llmGateway.complete({
+  model: AI_STRATEGY_ANALYST_CONFIG.model,
+  maxTokens: AI_STRATEGY_ANALYST_CONFIG.maxTokens,
+  system: AI_STRATEGY_ANALYST_CONFIG.systemPrompt,
+  tools: AI_STRATEGY_ANALYST_CONFIG.tools,
+  messages: [{ role: 'user', content: userInput }],
+});
+```
+
+**Adding a new system prompt:** create `src/<name>.ts` following the `ai-strategy-analyst.ts` pattern, export from `src/index.ts`, and add a companion doc at `packages/brand/docs/prompts/<name>.md`.
 
 ## Identity (Clerk)
 
