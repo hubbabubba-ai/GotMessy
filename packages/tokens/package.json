@@ -1,0 +1,20 @@
+{
+  "name": "@gotmessy/tokens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Got Messy shared design tokens — source of truth: Final/*.html :root block",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "generate": "python3 ../brand/scripts/generate-tokens.py",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

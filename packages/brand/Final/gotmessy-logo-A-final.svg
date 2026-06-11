@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="600" height="200">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,700;1,400&amp;display=swap');
+      .got  { font-family:'Lora',serif; font-style:italic; font-weight:400; font-size:54px; fill:#3D3530; }
+      .messy{ font-family:'Lora',serif; font-style:normal; font-weight:700; font-size:80px; fill:#1A1612; }
+      .dot  { font-family:'Lora',serif; font-style:normal; font-weight:700; font-size:90px; fill:#C4673A; }
+    </style>
+  </defs>
+  <rect width="600" height="200" fill="#FAF7F2"/>
+  <text class="got"   x="38"  y="145">got</text>
+  <text class="messy" x="118" y="148">messy</text>
+  <text class="dot"   x="476" y="142">.</text>
+</svg>

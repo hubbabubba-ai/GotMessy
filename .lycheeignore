@@ -1,0 +1,7 @@
+# Patterns for URLs lychee should not check (regex, one per line).
+#
+# These HTML deliverables are referenced as cross-links inside Final/ HTML files
+# but are not yet present in the repository (they exist in the original brand-kit
+# bundle but were not extracted). Remove when the files land in packages/brand/Final/.
+gotmessy-brand-kit-final\.html$
+gotmessy-hub\.html$

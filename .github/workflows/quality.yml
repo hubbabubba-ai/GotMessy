@@ -1,0 +1,97 @@
+name: Quality
+
+on:
+  push:
+    branches: ["main", "claude/**"]
+  pull_request:
+    branches: ["main", "claude/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install root dependencies
+        run: npm install --ignore-scripts
+
+      - name: Typecheck @gotmessy/tokens
+        run: npm --workspace packages/tokens exec -- tsc --noEmit
+
+      - name: HTML validation
+        run: npx --yes html-validate@9 "packages/brand/Final/**/*.html" "packages/brand/index.html"
+
+      - name: Markdown lint
+        run: npx --yes markdownlint-cli2@0.13 "packages/brand/docs/**/*.md" "CLAUDE.md" "README.md"
+
+      - name: Brand-rule lint
+        run: bash packages/brand/scripts/brand-lint.sh
+
+      - name: Brand-token drift
+        run: python3 packages/brand/scripts/check-token-drift.py
+
+      - name: Asset-pair check
+        run: |
+          shopt -s nullglob
+          fail=0
+          for f in packages/brand/Final/*.{png,svg,jpg,jpeg,pdf}; do
+            [[ -e "$f" ]] || continue
+            base="${f%.*}"
+            ext="${f##*.}"
+            [[ "$base" == *"-final" ]] && continue
+            sibling="${base}-final.${ext}"
+            if [[ ! -e "$sibling" ]]; then
+              echo "$f: missing canonical sibling $sibling (-final is the shippable source of truth)"
+              fail=1
+            fi
+          done
+          exit $fail
+
+      - name: Link check
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --exclude-mail
+            --accept 200,206,403,429
+            'packages/brand/Final/**/*.html'
+            'packages/brand/docs/**/*.md'
+            'packages/brand/index.html'
+            'CLAUDE.md'
+          fail: true
+
+      - name: Serve site for accessibility audit
+        run: |
+          npx --yes http-server@14 -p 8080 -s &
+          echo $! > /tmp/http-server.pid
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:8080/ >/dev/null && break
+            sleep 0.5
+          done
+
+      - name: Accessibility audit (pa11y-ci, WCAG 2.1 AA)
+        run: npx --yes pa11y-ci@3 --config .pa11yci
+
+      - name: Stop http-server
+        if: always()
+        run: |
+          [[ -f /tmp/http-server.pid ]] && kill "$(cat /tmp/http-server.pid)" 2>/dev/null || true
+          exit 0

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Got Messy — Brand Guidelines</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FAF7F2;--warm:#F2EDE4;--ink:#1A1612;--ink-soft:#3D3530;
+  --dust:#C4B5A0;--clay:#C4673A;--clay-dk:#9B4A28;--clay-lt:#E8896A;
+  --sage:#5C7A62;--lav:#8B7BAB;--sky:#5B8FA8;--yellow:#E8C84A;
+  --card:#1E1A16;--card-bd:rgba(255,255,255,0.08);
+}
+html{scroll-behavior:smooth;color-scheme:dark;background:#1A1612}
+body{font-family:'Poppins',sans-serif;background:#1A1612 !important;color:#FAF7F2 !important;font-size:14px;line-height:1.65;-webkit-text-size-adjust:100%}
+
+/* NAV */
+nav.top-nav{position:sticky;top:0;z-index:100;background:#100E0B;border-bottom:1px solid rgba(255,255,255,.06);padding:0 32px;display:flex;justify-content:space-between;align-items:center;height:52px}
+.nav-logo{font-family:'Lora',serif;font-size:15px;font-weight:700;display:flex;align-items:baseline;gap:3px}
+.nav-logo .got{font-style:italic;font-weight:400;color:var(--dust);font-size:12px}
+.nav-logo .dot{color:var(--clay)}
+.nav-links{display:flex;gap:18px;font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.nav-links a{color:var(--dust);text-decoration:none;transition:color .18s}
+.nav-links a:hover{color:var(--cream)}
+.nav-back{font-size:11px;font-weight:600;color:var(--dust);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .18s;padding:6px 12px;border-radius:7px;border:1px solid rgba(255,255,255,.08)}
+.nav-back:hover{color:var(--cream);background:rgba(255,255,255,.06)}
+
+/* LAYOUT */
+.page{max-width:1100px;margin:0 auto;padding:0 32px}
+
+/* HERO */
+.hero{background:var(--ink);padding:72px 0 56px;position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06)}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 50% at 85% 15%,rgba(196,103,58,.16) 0%,transparent 70%),radial-gradient(ellipse 40% 55% at 12% 85%,rgba(139,123,171,.1) 0%,transparent 60%)}
+.hero-inner{position:relative;z-index:2}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(196,103,58,.12);border:1px solid rgba(196,103,58,.28);border-radius:100px;padding:5px 14px;font-size:.72rem;font-weight:600;letter-spacing:.06em;color:var(--clay-lt);margin-bottom:26px}
+.hero h1{font-family:'Lora',serif;font-size:clamp(2.6rem,6vw,4.6rem);font-weight:700;color:var(--cream);line-height:1.05;margin-bottom:6px}
+.hero h1 em{font-style:italic;color:var(--clay);font-weight:400}
+.hero h1 .dot{color:var(--clay)}
+.hero-sub{font-size:clamp(.95rem,2vw,1.08rem);color:var(--dust);max-width:640px;margin:18px 0 12px;font-weight:300;line-height:1.75}
+.hero-sub strong{color:var(--cream);font-weight:500}
+.hero-extends{font-size:.78rem;color:var(--dust);margin-top:12px;font-weight:300;font-style:italic}
+.hero-extends a{color:var(--clay-lt);text-decoration:none}
+.hero-extends a:hover{color:var(--clay)}
+
+/* SECTIONS */
+main{padding:56px 0}
+.brand-section{margin-bottom:56px;scroll-margin-top:60px}
+.sec-label{font-size:.65rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dust);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-label::before{content:'●';color:var(--clay);font-size:.5rem}
+.sec-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+.brand-section h2{font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--cream);margin-bottom:8px;letter-spacing:-.01em}
+.brand-section h2 em{font-style:italic;color:var(--clay);font-weight:400}
+.brand-section .lede{color:var(--dust);font-weight:300;line-height:1.75;max-width:720px;margin-bottom:24px}
+.brand-section h3{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--cream);margin:18px 0 10px;letter-spacing:-.01em}
+.brand-section p{color:var(--dust);font-weight:300;line-height:1.75;margin-bottom:10px}
+.brand-section p strong{color:var(--cream);font-weight:500}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--card-bd);border-radius:14px;padding:22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+/* TABLES */
+table.gm{width:100%;border-collapse:collapse;font-size:.84rem;margin:12px 0}
+table.gm th,table.gm td{text-align:left;padding:11px 13px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:var(--dust);font-weight:300}
+table.gm th{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dust);background:rgba(255,255,255,.02);border-bottom-color:rgba(255,255,255,.1)}
+table.gm td strong{color:var(--cream);font-weight:500}
+table.gm code{font-family:'JetBrains Mono',Menlo,monospace;font-size:.78rem;color:var(--clay-lt);background:rgba(196,103,58,.08);padding:1px 6px;border-radius:4px}
+
+/* DO/DONT */
+.dodont{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+.dd{padding:14px 16px;border-radius:10px;font-size:.86rem;line-height:1.55}
+.dd.no{background:#2D1515;border:1px solid rgba(200,50,50,.32);color:#FCA5A5}
+.dd.yes{background:#152D1A;border:1px solid rgba(50,180,80,.28);color:#86EFAC}
+.dd.no::before{content:'✗  ';font-weight:700}
+.dd.yes::before{content:'✓  ';font-weight:700}
+.dd-label{display:block;font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dust);margin-bottom:6px}
+
+/* SWATCHES */
+.swatch-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.swatch{display:flex;flex-direction:column;border-radius:11px;overflow:hidden;flex:1;min-width:120px;border:1px solid rgba(255,255,255,.06)}
+.sw-block{height:60px}
+.sw-info{background:#221D19;padding:9px 11px}
+.sw-name{font-weight:600;font-size:.75rem;color:var(--cream)}
+.sw-hex{font-family:monospace;font-size:.68rem;color:var(--dust);margin-top:1px}
+.sw-use{font-size:.62rem;color:var(--dust);margin-top:2px;opacity:.85;line-height:1.4}
+
+/* WORDMARK */
+.wordmark-stage{padding:38px 28px;border-radius:14px;background:#100E0B;border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.wm{font-family:'Lora',serif;display:flex;align-items:baseline;gap:4px}
+.wm .got{font-style:italic;font-weight:400;font-size:1.1rem;color:var(--dust);letter-spacing:.02em}
+.wm .messy{font-weight:700;font-size:3rem;color:var(--cream);letter-spacing:-.02em;line-height:1}
+.wm .dot{font-weight:700;font-size:3.2rem;color:var(--clay);line-height:1}
+.wm-anatomy{display:flex;justify-content:center;gap:38px;font-family:monospace;font-size:.7rem;color:var(--dust);margin-top:8px}
+.wm-anatomy span strong{display:block;color:var(--clay-lt);font-weight:500;margin-bottom:2px}
+
+/* CHIPS */
+.chip-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.chip{font-size:.72rem;font-weight:500;padding:5px 11px;border-radius:100px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--dust)}
+.chip.clay{background:rgba(196,103,58,.1);border-color:rgba(196,103,58,.28);color:var(--clay-lt)}
+.chip.bad{background:rgba(200,50,50,.08);border-color:rgba(200,50,50,.28);color:#FCA5A5;text-decoration:line-through}
+
+/* CALLOUT */
+.callout{padding:16px 18px;border-radius:11px;background:rgba(232,200,74,.07);border:1px solid rgba(232,200,74,.22);font-size:.86rem;color:var(--cream);line-height:1.65;margin:14px 0}
+.callout strong{color:var(--yellow);font-weight:600}
+
+/* FOOTER */
+footer{padding:38px 0 56px;border-top:1px solid rgba(255,255,255,.06);font-size:.76rem;color:var(--dust);font-weight:300;text-align:center}
+footer .ver{color:var(--clay-lt)}
+
+@media(max-width:720px){
+  .g2,.dodont{grid-template-columns:1fr}
+  .nav-links{display:none}
+  table.gm{font-size:.78rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-logo"><span class="got">got</span><span>Messy</span><span class="dot">.</span></div>
+  <div class="nav-links">
+    <a href="#wordmark">Wordmark</a>
+    <a href="#colour">Colour</a>
+    <a href="#a11y">A11y</a>
+    <a href="#type">Type</a>
+    <a href="#voice">Voice</a>
+    <a href="#motion">Motion</a>
+  </div>
+  <a href="gotmessy-hub.html" class="nav-back">← Project Hub</a>
+</nav>
+
+<header class="hero">
+  <div class="page hero-inner">
+    <div class="hero-eyebrow">✦ Brand Guidelines · v1.0 · Operational rules</div>
+    <h1>Apply <em>Got Messy</em><br>without breaking it<span class="dot">.</span></h1>
+    <p class="hero-sub">The kit tells you <strong>what</strong> the brand is. This tells you <strong>how to use it</strong> — and where not to. Wordmark rules, accent budgets, accessibility floors, voice antipatterns, motion timings.</p>
+    <p class="hero-extends">Extends <a href="gotmessy-brand-kit-final.html">Brand Identity Kit</a>. If anything here contradicts the kit, the kit wins.</p>
+  </div>
+</header>
+
+<main>
+<div class="page">
+
+<!-- 1. WORDMARK -->
+<section class="brand-section" id="wordmark">
+  <div class="sec-label">01 · Wordmark &amp; Logo Usage</div>
+  <h2>The wordmark is one mark, not three pieces</h2>
+  <p class="lede">Italic <em>got</em>, bold <strong>Messy</strong>, and the clay dot are a single typographic lockup. Treat them as one element when sizing, spacing, and animating.</p>
+
+  <div class="wordmark-stage">
+    <div class="wm"><span class="got">got</span><span class="messy">Messy</span><span class="dot">.</span></div>
+  </div>
+  <div class="wm-anatomy">
+    <span><strong>Italic Lora 400</strong>lowercase "got"</span>
+    <span><strong>Bold Lora 700</strong>"Messy"</span>
+    <span><strong>Clay terminal dot</strong>load-bearing</span>
+  </div>
+
+  <h3>Clear space &amp; minimum sizes</h3>
+  <p>Reserve clear space equal to the cap-height of <strong>"M"</strong> in <em>Messy</em>. Below the minimums, switch to the icon mark — don't shrink the wordmark.</p>
+  <table class="gm">
+    <thead><tr><th>Surface</th><th>Minimum height of "M"</th></tr></thead>
+    <tbody>
+      <tr><td>Print</td><td>14 pt</td></tr>
+      <tr><td>Screen — desktop</td><td>18 px</td></tr>
+      <tr><td>Screen — mobile</td><td>16 px</td></tr>
+      <tr><td>Favicon / app icon</td><td>Use <code>gotmessy-icon.svg</code>, not the wordmark</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Logo selection</h3>
+  <table class="gm">
+    <thead><tr><th>Variant</th><th>When to use</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Logo A</strong> <span class="chip clay">Lead</span></td><td>Default everywhere. Should answer ~90% of placements.</td></tr>
+      <tr><td>Logo B</td><td>Only when A's proportions don't fit a narrow stack or square crop.</td></tr>
+      <tr><td>Logo C</td><td>Reserved per the kit. Don't repurpose.</td></tr>
+      <tr><td><code>-transparent</code></td><td>Photography overlay. Re-test contrast every time.</td></tr>
+      <tr><td><code>gotmessy-app-icon</code></td><td>App stores, OS launchers, taskbar pins only.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Don't</h3>
+  <div class="chip-row">
+    <span class="chip bad">recolour the wordmark</span>
+    <span class="chip bad">drop-shadow / glow / bevel</span>
+    <span class="chip bad">rotate / skew / arc</span>
+    <span class="chip bad">all-caps "MESSY"</span>
+    <span class="chip bad">replace dot</span>
+    <span class="chip bad">letter-space to fit</span>
+    <span class="chip bad">animate "Got" alone</span>
+    <span class="chip bad">stack with a separate icon lockup</span>
+  </div>
+</section>
+
+<!-- 2. COLOUR -->
+<section class="brand-section" id="colour">
+  <div class="sec-label">02 · Colour Application</div>
+  <h2>Roles before hexes</h2>
+  <p class="lede">The kit lists the palette. The application layer is about <strong>roles</strong> — what each token is allowed to do — and the per-view <strong>accent budget</strong> that keeps screens calm.</p>
+
+  <div class="swatch-row">
+    <div class="swatch"><div class="sw-block" style="background:#1A1612"></div><div class="sw-info"><div class="sw-name">--ink</div><div class="sw-hex">#1A1612</div><div class="sw-use">Default page bg</div></div></div>
+    <div class="swatch"><div class="sw-block" style="background:#FAF7F2"></div><div class="sw-info"><div class="sw-name">--cream</div><div class="sw-hex">#FAF7F2</div><div class="sw-use">Body text on dark</div></div></div>
+    <div class="swatch"><div class="sw-block" style="background:#C4B5A0"></div><div class="sw-info"><div class="sw-name">--dust</div><div class="sw-hex">#C4B5A0</div><div class="sw-use">Muted / labels</div></div></div>
+    <div class="swatch"><div class="sw-block" style="background:#C4673A"></div><div class="sw-info"><div class="sw-name">--clay</div><div class="sw-hex">#C4673A</div><div class="sw-use">Primary action</div></div></div>
+    <div class="swatch"><div class="sw-block" style="background:#5C7A62"></div><div class="sw-info"><div class="sw-name">--sage</div><div class="sw-hex">#5C7A62</div><div class="sw-use">Success / live</div></div></div>
+    <div class="swatch"><div class="sw-block" style="background:#E8C84A"></div><div class="sw-info"><div class="sw-name">--yellow</div><div class="sw-hex">#E8C84A</div><div class="sw-use">Highlight</div></div></div>
+    <div class="swatch"><div class="sw-block" style="background:#8B7BAB"></div><div class="sw-info"><div class="sw-name">--lav</div><div class="sw-hex">#8B7BAB</div><div class="sw-use">Categorical</div></div></div>
+    <div class="swatch"><div class="sw-block" style="background:#5B8FA8"></div><div class="sw-info"><div class="sw-name">--sky</div><div class="sw-hex">#5B8FA8</div><div class="sw-use">Categorical</div></div></div>
+  </div>
+
+  <div class="callout"><strong>Accent budget:</strong> a single screen uses at most three of <code style="color:var(--clay-lt)">--clay --sage --lav --sky --yellow</code>. Using all five usually means decoration is substituting for hierarchy — collapse back to clay + dust.</div>
+
+  <h3>Forbidden</h3>
+  <!-- brand-lint-allow: chips below quote the forbidden colors as cautionary examples -->
+  <div class="chip-row">
+    <span class="chip bad">pure white #FFFFFF backgrounds</span> <!-- brand-lint-allow -->
+    <span class="chip bad">pure black #000000</span> <!-- brand-lint-allow -->
+    <span class="chip bad">electric blues / teals</span>
+    <span class="chip bad">high-saturation neons</span>
+  </div>
+</section>
+
+<!-- 3. ACCESSIBILITY -->
+<section class="brand-section" id="a11y">
+  <div class="sec-label">03 · Accessibility</div>
+  <h2>Accessibility <em>is</em> brand</h2>
+  <p class="lede">A messy-friendly product that's hostile to readers is off-brand. WCAG 2.2 AA is the floor, AAA where achievable.</p>
+
+  <table class="gm">
+    <thead><tr><th>Pair</th><th>Ratio</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td><code>--cream</code> on <code>--ink</code></td><td>~14.7:1</td><td>AAA · default body</td></tr>
+      <tr><td><code>--dust</code> on <code>--ink</code></td><td>~6.3:1</td><td>AA · labels &amp; metadata only</td></tr>
+      <tr><td><code>--clay</code> on <code>--ink</code></td><td>~4.6:1</td><td>AA · large text &amp; UI components only — <strong>not body</strong></td></tr>
+      <tr><td><code>--clay-lt</code> on <code>--ink</code></td><td>~6.9:1</td><td>AA · preferred for interactive accents</td></tr>
+      <tr><td><code>--ink</code> on <code>--warm</code></td><td>~13.5:1</td><td>AAA · light-mode default</td></tr>
+    </tbody>
+  </table>
+
+  <div class="g2" style="margin-top:14px">
+    <div class="card">
+      <h3 style="margin-top:0">Required behaviours</h3>
+      <p>Visible focus on every interactive element. Use <code style="font-family:monospace;font-size:.78rem;color:var(--clay-lt)">outline:2px solid var(--clay-lt); outline-offset:2px</code>. Never <code style="font-family:monospace;font-size:.78rem;color:var(--clay-lt)">outline:none</code> without a replacement indicator.</p>
+      <p>44×44px minimum touch targets on mobile. The product is mobile-first.</p>
+      <p>Honour <code style="font-family:monospace;font-size:.78rem;color:var(--clay-lt)">prefers-reduced-motion: reduce</code>. The blinking sage live-dot must freeze at 100% opacity.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Forms &amp; images</h3>
+      <p>Never use placeholder text as a label.</p>
+      <p>Every logo/icon image needs meaningful alt text. Decorative chrome is <code style="font-family:monospace;font-size:.78rem;color:var(--clay-lt)">alt=""</code> or <code style="font-family:monospace;font-size:.78rem;color:var(--clay-lt)">aria-hidden="true"</code>.</p>
+      <p>Re-validate contrast every time a token hex changes. The colour sheet is the source — regenerate the table here.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. TYPOGRAPHY -->
+<section class="brand-section" id="type">
+  <div class="sec-label">04 · Typography in Practice</div>
+  <h2>Italic Lora is seasoning, not the dish</h2>
+  <p class="lede">Lora for serif (display, headings, the wordmark, italic emphasis). Poppins for sans (body, UI, eyebrows). The kit covers families; this covers the application scale.</p>
+
+  <table class="gm">
+    <thead><tr><th>Level</th><th>Family / weight / style</th><th>Size</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Display</strong></td><td>Lora 700, italic on accent words</td><td>clamp(3rem, 7vw, 5.5rem)</td><td>Hero only — once per page</td></tr>
+      <tr><td><strong>H1</strong></td><td>Lora 700</td><td>2.25rem</td><td>Page title</td></tr>
+      <tr><td><strong>H2</strong></td><td>Lora 700</td><td>1.5rem</td><td>Section heading</td></tr>
+      <tr><td><strong>H3</strong></td><td>Lora 600</td><td>1.15rem</td><td>Sub-section</td></tr>
+      <tr><td><strong>Eyebrow</strong></td><td>Poppins 600, uppercase, +0.06em tracking</td><td>0.72rem</td><td>Above H1 / section labels</td></tr>
+      <tr><td><strong>Body</strong></td><td>Poppins 300–400</td><td>0.875–1rem</td><td>Default copy</td></tr>
+      <tr><td><strong>Caption</strong></td><td>Poppins 300</td><td>0.75rem</td><td>Timestamps, helpers</td></tr>
+    </tbody>
+  </table>
+
+  <p>Use italics for: the word "Got" in the wordmark; one emphasised noun per heading; pull quotes. <strong>Don't</strong> italicise long body passages.</p>
+  <p>Numerals that stack (pricing, dashboards, the Hub stats grid) use <code style="font-family:monospace;font-size:.78rem;color:var(--clay-lt)">font-variant-numeric: tabular-nums</code>.</p>
+  <p>Body line length: <strong>60–75 characters</strong>. Constrain prose blocks with <code style="font-family:monospace;font-size:.78rem;color:var(--clay-lt)">max-width: ~620px</code>.</p>
+</section>
+
+<!-- 5. VOICE -->
+<section class="brand-section" id="voice">
+  <div class="sec-label">05 · Voice &amp; Tone</div>
+  <h2>Brilliant friend. <em>Not a tutor, robot, or coach.</em></h2>
+  <p class="lede">The kit's personality line operationalised. The pairs below are the load-bearing ones.</p>
+
+  <!-- brand-lint-allow: the do/don't pairs below quote forbidden vocabulary as cautionary examples -->
+  <div class="dodont">
+    <div><span class="dd-label">Never</span><div class="dd no">Unleash your AI superpowers!</div></div> <!-- brand-lint-allow -->
+    <div><span class="dd-label">Always</span><div class="dd yes">You already know what good looks like.</div></div>
+    <div><span class="dd-label">Never</span><div class="dd no">Begin your prompt-engineering journey.</div></div> <!-- brand-lint-allow -->
+    <div><span class="dd-label">Always</span><div class="dd yes">Drop your mess in. We'll sort the structure.</div></div>
+    <div><span class="dd-label">Never</span><div class="dd no">Empower your workflow at scale.</div></div> <!-- brand-lint-allow -->
+    <div><span class="dd-label">Always</span><div class="dd yes">Save it. Re-use it tomorrow.</div></div>
+    <div><span class="dd-label">Never</span><div class="dd no">Awesome! 🎉 You did it!</div></div> <!-- brand-lint-allow -->
+    <div><span class="dd-label">Always</span><div class="dd yes">Saved.</div></div>
+  </div>
+
+  <h3 style="margin-top:22px">Forbidden vocabulary</h3>
+  <!-- brand-lint-allow: chips below enumerate the forbidden vocabulary itself -->
+  <div class="chip-row">
+    <span class="chip bad">journey</span> <!-- brand-lint-allow -->
+    <span class="chip bad">unlock</span> <!-- brand-lint-allow -->
+    <span class="chip bad">unleash</span> <!-- brand-lint-allow -->
+    <span class="chip bad">supercharge</span> <!-- brand-lint-allow -->
+    <span class="chip bad">next-level</span>
+    <span class="chip bad">game-changer</span>
+    <span class="chip bad">empower</span> <!-- brand-lint-allow -->
+    <span class="chip bad">leverage <em>(verb)</em></span> <!-- brand-lint-allow -->
+    <span class="chip bad">cutting-edge</span> <!-- brand-lint-allow -->
+    <span class="chip bad">AI-powered</span> <!-- brand-lint-allow -->
+    <span class="chip bad">learning curve</span> <!-- brand-lint-allow -->
+  </div>
+
+  <h3 style="margin-top:22px">Tone by surface</h3>
+  <table class="gm">
+    <thead><tr><th>Surface</th><th>Tone</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Onboarding</td><td>Warm, concrete, confident</td><td>"First thing — drop something messy in. Anything."</td></tr>
+      <tr><td>Empty state</td><td>Acknowledge + invite</td><td>"No saved prompts yet. Mirror It can copy a style you already like."</td></tr>
+      <tr><td>Error</td><td>Plain, no blame</td><td>"That didn't paste cleanly. Try the URL or the text directly."</td></tr>
+      <tr><td>Success</td><td>Quiet, not exclamatory</td><td>"Saved."</td></tr>
+      <tr><td>Long-form</td><td>A little lyrical, italic Lora pull-quotes</td><td>See the brand kit hero copy.</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:18px">Punctuation</h3>
+  <p><strong>Em dashes</strong> — yes. <strong>Exclamation marks</strong> — almost never (max one per page, only when the user shipped). <strong>Emoji</strong> — sparing, flat, used as section markers (🪞, 🧬, ✦), not body decoration.</p>
+</section>
+
+<!-- 6. MOTION -->
+<section class="brand-section" id="motion">
+  <div class="sec-label">06 · Motion</div>
+  <h2>One pulse, one easing, no horizontal slides</h2>
+  <p class="lede">Mess is unpredictable. The brand's motion isn't.</p>
+
+  <table class="gm">
+    <thead><tr><th>Property</th><th>Value</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Default duration</td><td><code>160ms</code></td><td>Already used across deliverables — keep it.</td></tr>
+      <tr><td>UI easing</td><td><code>cubic-bezier(0.4, 0, 0.2, 1)</code></td><td>Most micro-interactions</td></tr>
+      <tr><td>Hero / page reveal</td><td><code>cubic-bezier(0.16, 1, 0.3, 1)</code></td><td>Soft overshoot</td></tr>
+      <tr><td>Live-status pulse</td><td>2s blink on <code>--sage</code></td><td>Canonical brand pulse — no second pulse rate</td></tr>
+      <tr><td>Page transitions</td><td>8px Y-axis fade</td><td>Avoid horizontal slides</td></tr>
+    </tbody>
+  </table>
+  <div class="callout">All motion respects <code style="color:var(--clay-lt)">prefers-reduced-motion: reduce</code>. The sage pulse freezes at 100% opacity in reduced-motion mode.</div>
+</section>
+
+<!-- 7. DOMAINS / NAMING -->
+<section class="brand-section" id="naming">
+  <div class="sec-label">07 · Domains &amp; Naming</div>
+  <h2>One consumer brand. One held alias.</h2>
+  <div class="g2">
+    <div class="card">
+      <h3 style="margin-top:0">gotmessy.com <span class="chip clay" style="margin-left:4px">Lead</span></h3>
+      <p>The only consumer-facing domain. Marketing, product, docs all live under it.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">cloudcomb.com <span class="chip" style="margin-left:4px">Held</span></h3>
+      <p>Reserved for the enterprise / team edition. <strong>Don't</strong> link from gotmessy.com until that product launches. Don't borrow Cloud Comb's orderly tone — the contrast is the point.</p>
+    </div>
+  </div>
+  <p style="margin-top:14px">Product feature names use <strong>Title Case</strong> — The Architect, The Drop, Mirror It, My Good Stuff, User DNA, The Vault. Internal codenames (MirrorMind, Intent2Flow) are fine in technical docs but should not surface in UI.</p>
+</section>
+
+<!-- 8. ASSET VERSIONING -->
+<section class="brand-section" id="versioning">
+  <div class="sec-label">08 · Asset Versioning</div>
+  <h2>Working copy → <em>-final</em> → ship</h2>
+  <p class="lede">Per <code>CLAUDE.md</code>, every asset has a working copy and a <code>-final</code> canonical variant. The <code>-final</code> file is what ships.</p>
+  <ol style="color:var(--dust);font-weight:300;line-height:1.85;padding-left:20px">
+    <li>Drop the working file (no suffix) into <code>Final/</code>.</li>
+    <li>Once approved, copy it to its <code>-final</code> counterpart and update the matching PDF where one exists.</li>
+    <li>Re-run contrast / legibility checks if a token changed.</li>
+    <li>If the asset replaces a canonical file, capture the <em>why</em> in the commit message — terse history is no longer acceptable for design changes.</li>
+  </ol>
+</section>
+
+<!-- 9. OPEN QUESTIONS -->
+<section class="brand-section" id="open">
+  <div class="sec-label">09 · Open Questions</div>
+  <h2>Decisions deliberately deferred</h2>
+  <p class="lede">Flag the trade-off when these surface — don't invent an answer.</p>
+  <div class="g2">
+    <div class="card"><h3 style="margin-top:0">Theme switching</h3><p>Dark/light policy in the product. Current default: dark only.</p></div>
+    <div class="card"><h3 style="margin-top:0">Localisation</h3><p>Is "Got Messy" translated, transliterated, or held in English?</p></div>
+    <div class="card"><h3 style="margin-top:0">Email templates</h3><p>Transactional template design system not yet specified.</p></div>
+    <div class="card"><h3 style="margin-top:0">Cloud Comb crossover</h3><p>Shared sign-in / billing surfaces between the two brands.</p></div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+  Got Messy · Brand Guidelines · <span class="ver">v1.0</span> &middot; Extends the Brand Identity Kit
+</footer>
+
+</body>
+</html>

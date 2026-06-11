@@ -1,0 +1,305 @@
+/* ============================================================
+   GOT MESSY · COLORS + TYPOGRAPHY
+   The full token foundation. Import this on any artifact.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* ── Brand color system (named) ─────────────────── */
+  --gm-clay:        #C4673A;   /* Warm Clay — primary, CTA, logo, the ICONIC dot */
+  --gm-clay-dk:     #9B4A28;   /* hover / pressed clay */
+  --gm-clay-lt:     #E8896A;   /* tinted accents on dark */
+  --gm-ink:         #1A1612;   /* Deep Ink — headlines, hero, nav */
+  --gm-ink2:        #252218;   /* card on dark */
+  --gm-ink3:        #2E2820;   /* card hover on dark */
+  --gm-cream:       #FAF7F2;   /* Warm Cream — page bg (light), text on dark */
+  --gm-warm:        #F2EDE4;   /* Warm — subtle card on cream */
+  --gm-dust:        #C4B5A0;   /* Old Dust — subtext, borders */
+  --gm-dust-dk:     #9E8E7A;   /* tertiary dust */
+
+  /* Tool accent palette — each tool = one hue */
+  --gm-sage:        #5C7A62;   /* Sort It Out */
+  --gm-lav:         #8B7BAB;   /* Mirror It (flagship) */
+  --gm-sky:         #5B8FA8;   /* Make It */
+  --gm-yellow:      #E8C84A;   /* Just Tell Me */
+
+  /* ── Semantic surface tokens (light page = default) ── */
+  --bg:             var(--gm-cream);
+  --bg-muted:       var(--gm-warm);
+  --surface:        #ffffff;
+  --surface-2:      var(--gm-warm);
+  --fg:             var(--gm-ink);
+  --fg-muted:       #4a423a;
+  --fg-soft:        var(--gm-dust-dk);
+  --border:         rgba(26,22,18,0.10);
+  --border-strong:  rgba(26,22,18,0.18);
+  --accent:         var(--gm-clay);
+  --accent-hover:   var(--gm-clay-dk);
+  --on-accent:      #ffffff;
+
+  /* ── Type scale ─────────────────────────────────── */
+  --gm-font-display: 'Lora', Georgia, 'Times New Roman', serif;
+  --gm-font-ui:      'Poppins', -apple-system, system-ui, sans-serif;
+
+  --fs-display-xl: clamp(3rem, 8vw, 6.5rem);
+  --fs-display-l:  clamp(2.25rem, 5vw, 3.75rem);
+  --fs-display-m:  clamp(1.75rem, 3.5vw, 2.5rem);
+  --fs-h1:         clamp(2rem, 4vw, 3rem);
+  --fs-h2:         clamp(1.5rem, 2.6vw, 2rem);
+  --fs-h3:         1.25rem;
+  --fs-body:       1rem;
+  --fs-body-sm:    0.875rem;
+  --fs-caption:    0.75rem;
+  --fs-overline:   0.68rem;
+
+  --lh-tight:      1.05;
+  --lh-snug:       1.2;
+  --lh-base:       1.6;
+  --lh-relaxed:    1.75;
+
+  --tracking-tight:   -0.03em;
+  --tracking-normal:   0;
+  --tracking-wide:     0.04em;
+  --tracking-wider:    0.1em;
+  --tracking-widest:   0.14em;
+
+  /* ── Radii ─────────────────────────────────────── */
+  --r-sm:   4px;
+  --r-md:   8px;
+  --r-lg:   12px;
+  --r-xl:   14px;
+  --r-2xl:  20px;
+  --r-pill: 100px;
+
+  /* ── Spacing (4px base) ────────────────────────── */
+  --s-1: 4px;   --s-2: 8px;   --s-3: 12px;  --s-4: 16px;
+  --s-5: 20px;  --s-6: 24px;  --s-8: 32px;  --s-10: 40px;
+  --s-12: 48px; --s-16: 64px; --s-20: 80px; --s-24: 100px;
+
+  /* ── Shadows ───────────────────────────────────── */
+  --shadow-sm:         0 1px 2px rgba(26,22,18,0.06);
+  --shadow-md:         0 4px 12px rgba(26,22,18,0.08);
+  --shadow-lg:         0 12px 28px rgba(26,22,18,0.12);
+  --shadow-clay:       0 4px 20px rgba(196,103,58,0.30);
+  --shadow-clay-hover: 0 8px 28px rgba(196,103,58,0.40);
+  --shadow-phone:      0 32px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+
+  /* ── Motion ────────────────────────────────────── */
+  --easing: cubic-bezier(.2,.7,.2,1);
+  --t-fast: 0.18s;
+  --t-base: 0.22s;
+  --t-slow: 0.4s;
+
+  /* ── Layout ────────────────────────────────────── */
+  --container:       1060px;
+  --container-tight: 760px;
+}
+
+/* Dark theme — marketing surfaces */
+.gm-dark, :root.gm-dark {
+  --bg:            var(--gm-ink);
+  --bg-muted:      var(--gm-ink2);
+  --surface:       var(--gm-ink2);
+  --surface-2:     var(--gm-ink3);
+  --fg:            var(--gm-cream);
+  --fg-muted:      var(--gm-dust);
+  --fg-soft:       var(--gm-dust-dk);
+  --border:        rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+}
+
+/* ── Semantic type styles ───────────────────────── */
+
+.gm-display {
+  font-family: var(--gm-font-display);
+  font-weight: 700;
+  font-size: var(--fs-display-xl);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+}
+.gm-display em, .gm-italic-clay {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--gm-clay);
+}
+
+h1, .gm-h1 {
+  font-family: var(--gm-font-display);
+  font-weight: 700;
+  font-size: var(--fs-h1);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-tight);
+}
+h2, .gm-h2 {
+  font-family: var(--gm-font-display);
+  font-weight: 700;
+  font-size: var(--fs-h2);
+  line-height: 1.15;
+  letter-spacing: var(--tracking-tight);
+}
+h3, .gm-h3 {
+  font-family: var(--gm-font-display);
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  line-height: 1.25;
+}
+h1 em, h2 em, h3 em,
+.gm-h1 em, .gm-h2 em, .gm-h3 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--gm-clay);
+}
+
+p, .gm-body {
+  font-family: var(--gm-font-ui);
+  font-weight: 300;
+  font-size: var(--fs-body);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-muted);
+}
+
+.gm-lede {
+  font-family: var(--gm-font-ui);
+  font-weight: 300;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--fg-muted);
+}
+
+.gm-quote {
+  font-family: var(--gm-font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  line-height: 1.4;
+}
+
+.gm-dot { color: var(--gm-clay); }
+
+.gm-wordmark {
+  font-family: var(--gm-font-display);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  text-decoration: none;
+  color: inherit;
+}
+.gm-wordmark .got   { font-style: italic; font-weight: 400; color: var(--fg-muted); }
+.gm-wordmark .messy { font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+.gm-wordmark .dot   { color: var(--gm-clay); }
+
+.gm-eyebrow {
+  font-family: var(--gm-font-ui);
+  font-size: var(--fs-overline);
+  font-weight: 600;
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--gm-clay);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.gm-eyebrow::before { content: '●'; font-size: 0.4rem; }
+
+.gm-caption {
+  font-family: var(--gm-font-ui);
+  font-size: var(--fs-caption);
+  font-weight: 400;
+  color: var(--fg-soft);
+}
+
+.gm-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--gm-font-ui);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: var(--r-pill);
+}
+.gm-badge--clay   { background: rgba(196,103,58,.18); color: var(--gm-clay-lt); border: 1px solid rgba(196,103,58,.3); }
+.gm-badge--sage   { background: rgba(92,122,98,.20);  color: #8FAF96;            border: 1px solid rgba(92,122,98,.3); }
+.gm-badge--lav    { background: rgba(139,123,171,.20);color: #B8ADCF;            border: 1px solid rgba(139,123,171,.3); }
+.gm-badge--sky    { background: rgba(91,143,168,.20); color: #8BB5CA;            border: 1px solid rgba(91,143,168,.3); }
+.gm-badge--yellow { background: rgba(232,200,74,.15); color: var(--gm-yellow);   border: 1px solid rgba(232,200,74,.25); }
+.gm-badge--dust   { background: rgba(196,181,160,.10);color: var(--gm-dust);     border: 1px solid rgba(196,181,160,.2); }
+
+/* ── Primitives ─────────────────────────────────── */
+
+.gm-btn {
+  font-family: var(--gm-font-ui);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  padding: 14px 28px;
+  border-radius: var(--r-md);
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: background var(--t-base) var(--easing),
+              transform var(--t-base) var(--easing),
+              box-shadow var(--t-base) var(--easing);
+}
+.gm-btn--primary {
+  background: var(--gm-clay);
+  color: #fff;
+  box-shadow: var(--shadow-clay);
+}
+.gm-btn--primary:hover {
+  background: var(--gm-clay-dk);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-clay-hover);
+}
+.gm-btn--ghost {
+  background: transparent;
+  color: var(--fg-muted);
+  border-bottom: 1px solid var(--border-strong);
+  border-radius: 0;
+  padding: 14px 4px;
+}
+.gm-btn--ghost:hover { color: var(--fg); border-color: var(--gm-clay); }
+.gm-btn--secondary {
+  background: var(--surface-2);
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+.gm-btn--secondary:hover { background: var(--bg-muted); }
+
+.gm-grain { position: relative; }
+.gm-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.gm-glow-clay { position: relative; }
+.gm-glow-clay::after {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  top: -100px; right: -100px;
+  background: radial-gradient(circle, rgba(196,103,58,.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Animations ─────────────────────────────────── */
+@keyframes gm-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes gm-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+.gm-fade-up { animation: gm-fade-up 0.8s var(--easing) both; }

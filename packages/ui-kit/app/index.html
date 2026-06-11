@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Got Messy. — Clean words from messy thoughts.</title>
+<link rel="icon" href="../../assets/gotmessy-icon.svg">
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+/* ============================================================
+   GOT MESSY APP — UI KIT (light theme, product surfaces)
+   Click any tool in the left rail to switch.
+   Deep-links: index.html#drop  #mirror  #sort  #make  #just  #library
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--gm-font-ui);
+  background: var(--gm-cream);
+  color: var(--gm-ink);
+  font-size: 15px; line-height: 1.55;
+  display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 100vh;
+  overflow: hidden;
+}
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  background: #fff;
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  padding: 22px 16px 16px;
+  overflow-y: auto;
+}
+.brand {
+  display: flex; align-items: baseline; gap: 4px;
+  padding: 0 8px 24px;
+  text-decoration: none; color: inherit;
+}
+.brand .got    { font-family: var(--gm-font-display); font-style: italic; font-weight: 400; font-size: 14px; color: var(--gm-dust-dk); }
+.brand .messy  { font-family: var(--gm-font-display); font-weight: 700; font-size: 20px; color: var(--gm-ink); letter-spacing: -.02em; }
+.brand .dot    { font-family: var(--gm-font-display); font-weight: 700; font-size: 22px; color: var(--gm-clay); }
+
+.rail-eyebrow {
+  font-size: 10px; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--fg-soft);
+  padding: 18px 12px 8px;
+}
+
+.tool-nav {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.tool-link {
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 12px; border-radius: var(--r-md);
+  text-decoration: none; color: var(--fg-muted);
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; border: 0; background: transparent;
+  width: 100%; text-align: left;
+  transition: background var(--t-fast), color var(--t-fast);
+  position: relative;
+}
+.tool-link:hover { background: var(--gm-warm); color: var(--gm-ink); }
+.tool-link.active { background: var(--gm-warm); color: var(--gm-ink); font-weight: 600; }
+.tool-link.active::before {
+  content: ''; position: absolute; left: -16px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 22px; border-radius: 0 2px 2px 0;
+  background: var(--gm-clay);
+}
+.tool-link .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.tool-link .name { flex: 1; }
+.tool-link .badge {
+  font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--gm-dust-dk);
+}
+.tool-link[data-tool="mirror"] .dot { background: var(--gm-lav); }
+.tool-link[data-tool="drop"]   .dot { background: var(--gm-clay); }
+.tool-link[data-tool="sort"]   .dot { background: var(--gm-sage); }
+.tool-link[data-tool="make"]   .dot { background: var(--gm-sky); }
+.tool-link[data-tool="just"]   .dot { background: var(--gm-yellow); }
+.tool-link[data-tool="library"].dot { background: var(--gm-dust); }
+
+.rail-foot {
+  margin-top: auto;
+  display: flex; flex-direction: column; gap: 2px;
+  padding-top: 16px; border-top: 1px solid var(--border);
+}
+.foot-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--r-md);
+  text-decoration: none; color: var(--fg-soft);
+  font-size: 13px;
+}
+.foot-item:hover { background: var(--gm-warm); color: var(--gm-ink); }
+.foot-icon { width: 16px; height: 16px; }
+
+/* ─── MAIN ─── */
+.main {
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  background: var(--gm-cream);
+}
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 60px;
+  border-bottom: 1px solid var(--border);
+  background: var(--gm-cream);
+  flex-shrink: 0;
+}
+.crumb {
+  display: flex; align-items: baseline; gap: 10px;
+  font-family: var(--gm-font-display); font-weight: 700;
+  font-size: 18px; color: var(--gm-ink);
+}
+.crumb .swatch { width: 8px; height: 8px; border-radius: 50%; align-self: center; }
+.crumb .sub {
+  font-family: var(--gm-font-ui); font-weight: 300;
+  font-size: 12px; color: var(--fg-soft); margin-left: 4px;
+}
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.search {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px; border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: #fff; width: 220px;
+  font-size: 12px; color: var(--fg-soft);
+}
+.search input {
+  border: 0; outline: none; background: transparent;
+  font: inherit; color: var(--fg); flex: 1; min-width: 0;
+}
+.search .kbd {
+  font-family: var(--gm-font-ui); font-size: 10px; font-weight: 600;
+  color: var(--fg-soft); background: var(--gm-warm);
+  padding: 2px 6px; border-radius: 4px;
+}
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gm-clay-lt), var(--gm-clay-dk));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-family: var(--gm-font-display); font-weight: 700;
+  font-size: 13px;
+}
+
+/* ─── CONTENT ─── */
+.content {
+  flex: 1; overflow-y: auto;
+  padding: 36px 48px 80px;
+}
+.content-inner { max-width: 920px; margin: 0 auto; }
+
+.panel-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; margin-bottom: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.panel-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; }
+.panel-h1 {
+  font-family: var(--gm-font-display); font-weight: 700;
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem); line-height: 1.1;
+  letter-spacing: -.02em; margin-bottom: 10px;
+}
+.panel-h1 em { font-style: italic; font-weight: 400; color: var(--gm-clay); }
+.panel-sub {
+  font-size: 15px; color: var(--fg-muted); font-weight: 300;
+  max-width: 560px; line-height: 1.7; margin-bottom: 32px;
+}
+
+/* Cards & inputs (light theme) */
+.card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+.card + .card { margin-top: 14px; }
+
+.paste-zone {
+  background: #fff;
+  border: 1.5px dashed rgba(26,22,18,0.18);
+  border-radius: var(--r-xl);
+  padding: 32px;
+  transition: border-color var(--t-base), background var(--t-base);
+  position: relative;
+}
+.paste-zone:hover   { border-color: rgba(196,103,58,.5); background: #fffdfa; }
+.paste-zone.clay    { border-color: rgba(196,103,58,.35); }
+.paste-zone.lav     { border-color: rgba(139,123,171,.4); }
+.paste-zone.sage    { border-color: rgba(92,122,98,.4); }
+.paste-zone.sky     { border-color: rgba(91,143,168,.4); }
+.paste-zone.yellow  { border-color: rgba(218,180,40,.5); }
+.paste-zone textarea {
+  width: 100%; min-height: 160px;
+  border: 0; outline: 0; resize: vertical;
+  font-family: var(--gm-font-ui); font-weight: 300;
+  font-size: 15px; color: var(--fg);
+  background: transparent;
+}
+.paste-zone textarea::placeholder { color: var(--fg-soft); }
+.paste-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}
+.hint { font-size: 12px; color: var(--fg-soft); }
+.hint b { color: var(--fg); font-weight: 500; }
+
+/* Tool tag header on each panel */
+.tool-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; padding: 6px 12px;
+  border-radius: var(--r-pill);
+  margin-bottom: 20px;
+}
+.tool-tag .e { font-size: 14px; }
+.tag-mirror { background: rgba(139,123,171,.12); color: #6F5F90; border: 1px solid rgba(139,123,171,.3); }
+.tag-drop   { background: rgba(196,103,58,.12); color: var(--gm-clay-dk); border: 1px solid rgba(196,103,58,.3); }
+.tag-sort   { background: rgba(92,122,98,.12); color: #3F5C46; border: 1px solid rgba(92,122,98,.3); }
+.tag-make   { background: rgba(91,143,168,.12); color: #3D6E84; border: 1px solid rgba(91,143,168,.3); }
+.tag-just   { background: rgba(218,180,40,.14); color: #8C6F18; border: 1px solid rgba(218,180,40,.35); }
+.tag-library{ background: rgba(196,181,160,.18); color: #7C6E55; border: 1px solid rgba(196,181,160,.4); }
+
+/* Detected structure cards (Mirror It / Drop result) */
+.structure-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-top: 24px;
+}
+@media (max-width: 700px) { .structure-grid { grid-template-columns: 1fr; } }
+.struct-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gm-clay);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  transition: border-color var(--t-base), background var(--t-base);
+}
+.struct-card.lav  { border-left-color: var(--gm-lav); }
+.struct-card.sage { border-left-color: var(--gm-sage); }
+.struct-card.sky  { border-left-color: var(--gm-sky); }
+.struct-card .label {
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--gm-clay);
+  margin-bottom: 4px;
+}
+.struct-card.lav .label  { color: #6F5F90; }
+.struct-card.sage .label { color: #3F5C46; }
+.struct-card.sky .label  { color: #3D6E84; }
+.struct-card .value {
+  font-family: var(--gm-font-display); font-weight: 600;
+  font-size: 14px; color: var(--gm-ink); line-height: 1.4;
+}
+
+/* Result preview block */
+.result-block {
+  background: var(--gm-warm);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px; margin-top: 22px;
+}
+.result-block .label {
+  font-size: 11px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--gm-clay);
+  margin-bottom: 10px;
+}
+.result-block .pre {
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 13px; color: var(--fg);
+  line-height: 1.7; white-space: pre-wrap;
+}
+
+/* Action bar */
+.actions {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-top: 22px;
+}
+.btn {
+  font-family: var(--gm-font-ui); font-weight: 600;
+  font-size: 13px; letter-spacing: .02em;
+  padding: 10px 18px; border-radius: var(--r-md);
+  border: 0; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: background var(--t-base), transform var(--t-base);
+}
+.btn-primary { background: var(--gm-clay); color: #fff; box-shadow: var(--shadow-clay); }
+.btn-primary:hover { background: var(--gm-clay-dk); transform: translateY(-1px); }
+.btn-secondary {
+  background: #fff; color: var(--fg);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--gm-warm); }
+.btn-ghost {
+  background: transparent; color: var(--fg-muted);
+  padding: 10px 6px;
+  border-bottom: 1px solid var(--border-strong); border-radius: 0;
+}
+.btn-ghost:hover { color: var(--gm-clay); border-color: var(--gm-clay); }
+
+/* Form fields (Make It) */
+.field { margin-bottom: 18px; }
+.field-label {
+  display: block;
+  font-size: 11px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--fg-soft);
+  margin-bottom: 7px;
+}
+.field-input {
+  width: 100%; padding: 11px 14px; border-radius: var(--r-md);
+  border: 1px solid var(--border); background: #fff;
+  font: inherit; color: var(--fg);
+  transition: border-color var(--t-fast);
+}
+.field-input:focus { outline: 0; border-color: var(--gm-clay); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 6px 12px; border-radius: var(--r-pill);
+  border: 1px solid var(--border); background: #fff;
+  font-size: 12px; font-weight: 500; color: var(--fg-muted);
+  cursor: pointer; transition: all var(--t-fast);
+}
+.chip:hover { border-color: var(--gm-clay); color: var(--gm-clay); }
+.chip.on { background: var(--gm-clay); color: #fff; border-color: var(--gm-clay); }
+
+/* Slider (Creative ↔ Precise) */
+.slider-row { display: flex; align-items: center; gap: 14px; margin-top: 4px; }
+.slider-row .end { font-size: 11px; font-weight: 600; color: var(--fg-soft); letter-spacing: .04em; }
+.slider {
+  flex: 1; height: 4px; -webkit-appearance: none; appearance: none;
+  background: linear-gradient(90deg, var(--gm-sky) 0%, var(--gm-clay) 100%);
+  border-radius: 100px; outline: 0;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--gm-ink);
+  box-shadow: var(--shadow-sm); cursor: pointer;
+}
+.slider::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--gm-ink); cursor: pointer;
+}
+
+/* Library grid (My Good Stuff) */
+.library-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px; margin-top: 24px;
+}
+.lib-card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 18px;
+  transition: transform var(--t-base), box-shadow var(--t-base);
+  cursor: pointer;
+}
+.lib-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.lib-tag {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--fg-soft);
+  margin-bottom: 8px;
+}
+.lib-title {
+  font-family: var(--gm-font-display); font-weight: 700;
+  font-size: 15px; margin-bottom: 6px; line-height: 1.25;
+}
+.lib-desc { font-size: 12.5px; color: var(--fg-muted); font-weight: 300; line-height: 1.5; }
+.lib-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--fg-soft); font-weight: 500;
+}
+
+/* Steps list (Sort It Out) */
+.steps-list { margin-top: 22px; counter-reset: step; }
+.step {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+}
+.step:first-child { border-top: 0; padding-top: 0; }
+.step-num-tag {
+  font-family: var(--gm-font-display); font-weight: 700;
+  font-size: 22px; color: var(--gm-sage);
+  width: 32px; flex-shrink: 0; line-height: 1;
+}
+.step-body { flex: 1; }
+.step-h { font-family: var(--gm-font-display); font-weight: 700; font-size: 15px; margin-bottom: 3px; }
+.step-d { font-size: 13px; color: var(--fg-muted); font-weight: 300; line-height: 1.6; }
+
+/* Panel switching */
+.panel { display: none; }
+.panel.active { display: block; animation: gm-fade-up .35s var(--easing); }
+
+/* Mobile layout */
+@media (max-width: 760px) {
+  body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .sidebar { flex-direction: row; flex-wrap: wrap; padding: 12px; gap: 6px; }
+  .brand { padding: 0 8px 0 0; }
+  .rail-eyebrow { display: none; }
+  .tool-nav { flex-direction: row; flex-wrap: wrap; }
+  .tool-link { padding: 6px 10px; }
+  .tool-link.active::before { display: none; }
+  .tool-link .badge, .rail-foot { display: none; }
+  .topbar { padding: 0 16px; }
+  .search { display: none; }
+  .content { padding: 24px 18px 80px; }
+}
+
+.empty-hint {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--fg-soft);
+}
+.empty-hint .glyph { color: var(--gm-clay); }
+</style>
+</head>
+<body>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<aside class="sidebar" data-screen-label="App · Sidebar">
+  <a href="#drop" class="brand" title="Got Messy">
+    <span class="got">got</span><span class="messy">messy</span><span class="dot">.</span>
+  </a>
+
+  <div class="rail-eyebrow">Tools</div>
+  <nav class="tool-nav">
+    <button class="tool-link active" data-tool="drop">
+      <span class="dot"></span><span class="name">The Drop</span><span class="badge">MVP</span>
+    </button>
+    <button class="tool-link" data-tool="mirror">
+      <span class="dot"></span><span class="name">Mirror It</span><span class="badge">★</span>
+    </button>
+    <button class="tool-link" data-tool="sort">
+      <span class="dot"></span><span class="name">Sort It Out</span><span class="badge">V1</span>
+    </button>
+    <button class="tool-link" data-tool="make">
+      <span class="dot"></span><span class="name">Make It</span><span class="badge">V1</span>
+    </button>
+    <button class="tool-link" data-tool="just">
+      <span class="dot"></span><span class="name">Just Tell Me</span><span class="badge">V1</span>
+    </button>
+  </nav>
+
+  <div class="rail-eyebrow">Library</div>
+  <nav class="tool-nav">
+    <button class="tool-link" data-tool="library">
+      <span class="dot"></span><span class="name">My Good Stuff</span>
+    </button>
+  </nav>
+
+  <div class="rail-foot">
+    <a class="foot-item" href="#">
+      <svg class="foot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 015.8 1c0 2-3 2-3 4M12 17.5h.01"/>
+      </svg>
+      Help &amp; FAQ
+    </a>
+    <a class="foot-item" href="#">
+      <svg class="foot-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 01-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/>
+      </svg>
+      Settings
+    </a>
+  </div>
+</aside>
+
+<!-- ════════════ MAIN ════════════ -->
+<main class="main">
+
+  <!-- ─── Topbar ─── -->
+  <header class="topbar">
+    <div class="crumb" id="crumb">
+      <span class="swatch" id="crumbSwatch" style="background:var(--gm-clay)"></span>
+      <span id="crumbTitle">The Drop</span>
+      <span class="sub" id="crumbSub">Smart-paste · auto-build a prompt</span>
+    </div>
+    <div class="topbar-right">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>
+        </svg>
+        <input placeholder="Search prompts…">
+        <span class="kbd">⌘ K</span>
+      </div>
+      <div class="avatar">G</div>
+    </div>
+  </header>
+
+  <!-- ─── Content ─── -->
+  <section class="content">
+    <div class="content-inner">
+
+      <!-- ══════════════════════════════════════════
+           PANEL: THE DROP
+           Default panel. Paste raw mess → auto-build prompt structure.
+           ══════════════════════════════════════════ -->
+      <div class="panel active" data-panel="drop">
+        <div class="tool-tag tag-drop"><span class="e">📥</span>The Drop · MVP</div>
+        <h1 class="panel-h1">Drop your mess.<br><em>We'll sort it out.</em></h1>
+        <p class="panel-sub">Paste anything — notes, half-baked drafts, a voice memo transcript, a URL. The messier the better. Smart Paste reads it and builds your prompt structure.</p>
+
+        <div class="paste-zone clay">
+          <textarea placeholder="Paste your raw chaos here…">ok so i need to write something for linkedin but i dont really know what to say, something about my new role maybe? or just general thought leadership stuff. i have notes somewhere. tone should be professional but not boring. maybe 150 words?</textarea>
+          <div class="paste-row">
+            <div class="hint"><b>Smart Paste</b> · We'll figure out Persona · Task · Format · Context automatically.</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-secondary">Clear</button>
+              <button class="btn btn-primary">Drop It In →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="structure-grid">
+          <div class="struct-card">
+            <div class="label">Persona</div>
+            <div class="value">Senior professional sharing a career milestone</div>
+          </div>
+          <div class="struct-card">
+            <div class="label">Task</div>
+            <div class="value">Write a LinkedIn post announcing a new role</div>
+          </div>
+          <div class="struct-card">
+            <div class="label">Format</div>
+            <div class="value">150 words · professional but warm · first person</div>
+          </div>
+          <div class="struct-card">
+            <div class="label">Context</div>
+            <div class="value">Thought leadership angle · avoid corporate clichés</div>
+          </div>
+        </div>
+
+        <div class="result-block">
+          <div class="label">Your clean prompt</div>
+          <div class="pre">You are a senior professional sharing a career milestone on LinkedIn. Write a 150-word post announcing your new role. Voice: professional but warm, first person, no corporate clichés. Include a thought-leadership angle on what the move means for your industry.</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary">Copy to clipboard</button>
+          <button class="btn btn-secondary">Save to My Good Stuff</button>
+          <button class="btn btn-ghost">Open in ChatGPT ↗</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PANEL: MIRROR IT
+           Paste an AI output you loved → decode the prompt that made it.
+           ══════════════════════════════════════════ -->
+      <div class="panel" data-panel="mirror">
+        <div class="tool-tag tag-mirror"><span class="e">🪞</span>Mirror It · Flagship</div>
+        <h1 class="panel-h1">Saw something great?<br><em>Let's decode it.</em></h1>
+        <p class="panel-sub">Paste an AI output you loved — from anywhere. Mirror It reverse-engineers the exact prompt that made it, so you can use that prompt again, on your own work.</p>
+
+        <div class="paste-zone lav">
+          <textarea placeholder="Paste the AI output you loved here…">There's a particular kind of quiet that lives in libraries — the rustle of pages, the soft scratch of pens, the way time seems to stretch and pool around tables of strangers sharing a kind of focused solitude. It's the sound of permission to think slowly.</textarea>
+          <div class="paste-row">
+            <div class="hint"><b>What's the structure?</b> · We'll detect tone, persona, format, and length.</div>
+            <button class="btn btn-primary" style="background:var(--gm-lav);box-shadow:0 4px 20px rgba(139,123,171,.3)">Mirror It →</button>
+          </div>
+        </div>
+
+        <div class="panel-eyebrow" style="margin-top:32px">
+          <span class="dot" style="background:var(--gm-lav)"></span>
+          <span style="color:#6F5F90">Detected structure</span>
+        </div>
+
+        <div class="structure-grid">
+          <div class="struct-card lav">
+            <div class="label">Persona</div>
+            <div class="value">Literary essayist with a sensory eye</div>
+          </div>
+          <div class="struct-card lav">
+            <div class="label">Task</div>
+            <div class="value">Write a short reflective paragraph about a quiet place</div>
+          </div>
+          <div class="struct-card lav">
+            <div class="label">Format</div>
+            <div class="value">3–4 sentences · second-person-adjacent · poetic register</div>
+          </div>
+          <div class="struct-card lav">
+            <div class="label">Style notes</div>
+            <div class="value">Sensory detail · em-dashes · soft cadence · ends with a turn</div>
+          </div>
+        </div>
+
+        <div class="result-block">
+          <div class="label">The prompt that made it</div>
+          <div class="pre">You are a literary essayist with a sensory eye for everyday spaces. Write a short reflective paragraph (3–4 sentences) about the quiet of a public space. Use specific sounds and details. Vary sentence length, lean on em-dashes, and end with a quiet observation that reframes the scene. Voice: poetic but plain. No metaphors that strain.</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" style="background:var(--gm-lav);box-shadow:0 4px 20px rgba(139,123,171,.3)">Save as template</button>
+          <button class="btn btn-secondary">Try a different output</button>
+          <button class="btn btn-ghost">Send to Make It →</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PANEL: SORT IT OUT
+           Drop a pile of tasks → grouped weekly plan.
+           ══════════════════════════════════════════ -->
+      <div class="panel" data-panel="sort">
+        <div class="tool-tag tag-sort"><span class="e">🗂</span>Sort It Out · V1</div>
+        <h1 class="panel-h1">A pile of stuff.<br><em>One clean plan.</em></h1>
+        <p class="panel-sub">When you have a hundred things to do and no idea where to start. Drop the whole pile in. Sort It Out organises it into a structured plan you can send straight to Make It.</p>
+
+        <div class="paste-zone sage">
+          <textarea placeholder="Drop your pile in…">Q3 planning. Need to: brief the design team on the new pricing page, follow up with three investors, prep board deck (slides on retention + new tool launch), get legal sign-off on the partner contract, hire a content lead, ship the iOS update, do the 1:1s I keep rescheduling…</textarea>
+          <div class="paste-row">
+            <div class="hint"><b>What kind of plan?</b> · We'll group by theme, priority, and effort.</div>
+            <button class="btn btn-primary" style="background:var(--gm-sage);box-shadow:0 4px 20px rgba(92,122,98,.3)">Sort It Out →</button>
+          </div>
+        </div>
+
+        <div class="panel-eyebrow" style="margin-top:32px">
+          <span class="dot" style="background:var(--gm-sage)"></span>
+          <span style="color:#3F5C46">Your plan</span>
+        </div>
+
+        <div class="steps-list">
+          <div class="step">
+            <div class="step-num-tag">01</div>
+            <div class="step-body">
+              <div class="step-h">This week — Strategy</div>
+              <p class="step-d">Brief design on the pricing page · Investor follow-ups (3) · Outline the board deck retention slide.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num-tag">02</div>
+            <div class="step-body">
+              <div class="step-h">Next week — People</div>
+              <p class="step-d">Reschedule and actually do all 1:1s · Open the content-lead role · Loop legal on the partner contract.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num-tag">03</div>
+            <div class="step-body">
+              <div class="step-h">By end of month — Ship</div>
+              <p class="step-d">iOS update ready to ship · Board deck final draft · Tool-launch slides for the deck.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" style="background:var(--gm-sage);box-shadow:0 4px 20px rgba(92,122,98,.3)">Send to Make It →</button>
+          <button class="btn btn-secondary">Save as template</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PANEL: MAKE IT
+           Manual crafter — Persona / Task / Tone / Slider / Format.
+           ══════════════════════════════════════════ -->
+      <div class="panel" data-panel="make">
+        <div class="tool-tag tag-make"><span class="e">✏️</span>Make It · V1</div>
+        <h1 class="panel-h1">Build it yourself.<br><em>Your way.</em></h1>
+        <p class="panel-sub">The manual crafter. Pick your role, your task, your tone. Slide between creative and precise. We do the prompt engineering — you do the deciding.</p>
+
+        <div class="card">
+          <div class="field">
+            <label class="field-label">Persona — who's writing?</label>
+            <input class="field-input" value="Senior product designer, 10+ years in B2B SaaS">
+          </div>
+          <div class="field">
+            <label class="field-label">Task — what are you making?</label>
+            <input class="field-input" value="Critique a landing page wireframe">
+          </div>
+          <div class="field">
+            <label class="field-label">Tone</label>
+            <div class="chip-row">
+              <span class="chip">Friendly</span>
+              <span class="chip on">Direct</span>
+              <span class="chip">Warm</span>
+              <span class="chip">Playful</span>
+              <span class="chip">Formal</span>
+              <span class="chip">Analytical</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Creative ↔ Precise</label>
+            <div class="slider-row">
+              <span class="end">Creative</span>
+              <input type="range" class="slider" min="0" max="100" value="68">
+              <span class="end">Precise</span>
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label class="field-label">Format &amp; length</label>
+            <input class="field-input" value="3 paragraphs · 200 words · ends with one concrete next step">
+          </div>
+        </div>
+
+        <div class="result-block">
+          <div class="label">Live prompt preview</div>
+          <div class="pre">You are a senior product designer with 10+ years in B2B SaaS. Critique the attached landing-page wireframe. Voice: direct, lean toward precise feedback over open-ended brainstorm. Write 3 paragraphs (≈200 words). Use specific design vocabulary. End with one concrete next step the team can take this week.</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" style="background:var(--gm-sky);box-shadow:0 4px 20px rgba(91,143,168,.3)">Generate</button>
+          <button class="btn btn-secondary">Save to My Good Stuff</button>
+          <button class="btn btn-ghost">Reset</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PANEL: JUST TELL ME
+           Plain-language goal → Got Messy picks the tool and delivers the prompt.
+           ══════════════════════════════════════════ -->
+      <div class="panel" data-panel="just">
+        <div class="tool-tag tag-just"><span class="e">🎯</span>Just Tell Me · V1</div>
+        <h1 class="panel-h1">No decisions required.<br><em>Just tell me what you want.</em></h1>
+        <p class="panel-sub">Tell Got Messy what you want to achieve. We pick the right tool, write the prompt, and hand it back ready to go. The friend who takes the wheel.</p>
+
+        <div class="paste-zone yellow">
+          <textarea placeholder="What do you want to do?">I want to write a cold email to a potential client. They run a mid-size design agency in Berlin. I've been following their work for a year and I'd love to do contract work for them.</textarea>
+          <div class="paste-row">
+            <div class="hint"><b>Auto-routed</b> · We'll pick the right tool and just deliver the prompt.</div>
+            <button class="btn btn-primary" style="background:#C8A82A;box-shadow:0 4px 20px rgba(218,180,40,.3);color:var(--gm-ink)">Just Tell Me →</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:22px;background:var(--gm-warm)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8C6F18">We chose</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;font-family:var(--gm-font-display);font-weight:700;font-size:15px">
+              <span style="width:8px;height:8px;border-radius:50%;background:var(--gm-sky)"></span>Make It
+            </span>
+            <span style="font-size:12px;color:var(--fg-soft)">— because you have a clear audience and goal</span>
+          </div>
+          <div class="result-block" style="margin-top:0;background:#fff">
+            <div class="label">Your prompt</div>
+            <div class="pre">You are an experienced freelance designer writing a cold email to a Berlin-based mid-size design agency. You've followed their work for a year and want to pitch yourself for contract work. Write a short email (≤120 words). Voice: confident but warm, specific about why this agency (mention one of their projects you genuinely admire), and end with a low-friction next step. No "I'd love to chat" filler.</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary">Copy</button>
+          <button class="btn btn-secondary">Tweak in Make It</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           PANEL: MY GOOD STUFF
+           Personal prompt library — filter chips + grid of saved cards.
+           ══════════════════════════════════════════ -->
+      <div class="panel" data-panel="library">
+        <div class="tool-tag tag-library"><span class="e">✨</span>My Good Stuff · Library</div>
+        <h1 class="panel-h1">Your prompts.<br><em>Organised the way you think.</em></h1>
+        <p class="panel-sub">Every template you've saved, sorted by life area. Remix any of them back into Make It whenever you need it again.</p>
+
+        <div class="chip-row" style="margin-bottom:6px">
+          <span class="chip on">All</span>
+          <span class="chip">Work · Email</span>
+          <span class="chip">Work · Strategy</span>
+          <span class="chip">Personal</span>
+          <span class="chip">Social</span>
+          <span class="chip">Writing</span>
+        </div>
+
+        <div class="library-grid">
+          <div class="lib-card">
+            <div class="lib-tag" style="color:var(--gm-clay-dk)">📥 The Drop · Work · Email</div>
+            <div class="lib-title">LinkedIn post — new role</div>
+            <p class="lib-desc">Professional-but-warm career milestone announcement. 150 words. First person. No corporate clichés.</p>
+            <div class="lib-meta"><span>Used 4 times</span><span>2 days ago</span></div>
+          </div>
+          <div class="lib-card">
+            <div class="lib-tag" style="color:#6F5F90">🪞 Mirror It · Writing</div>
+            <div class="lib-title">Literary essayist · quiet spaces</div>
+            <p class="lib-desc">Sensory-detail-led reflective paragraph. Em-dashes. Ends with a turn that reframes the scene.</p>
+            <div class="lib-meta"><span>Used 2 times</span><span>1 week ago</span></div>
+          </div>
+          <div class="lib-card">
+            <div class="lib-tag" style="color:#3D6E84">✏️ Make It · Work · Email</div>
+            <div class="lib-title">Cold email to design agency</div>
+            <p class="lib-desc">Short pitch (≤120 words). Specific, warm, no filler. Ends with low-friction next step.</p>
+            <div class="lib-meta"><span>Used 1 time</span><span>3 weeks ago</span></div>
+          </div>
+          <div class="lib-card">
+            <div class="lib-tag" style="color:#3F5C46">🗂 Sort It Out · Work · Strategy</div>
+            <div class="lib-title">Quarter planning · group by theme</div>
+            <p class="lib-desc">Reshape a pile of unsorted Q-tasks into themed weekly groups. Strategy → People → Ship.</p>
+            <div class="lib-meta"><span>Used 6 times</span><span>5 days ago</span></div>
+          </div>
+          <div class="lib-card">
+            <div class="lib-tag" style="color:#3D6E84">✏️ Make It · Social</div>
+            <div class="lib-title">Twitter thread · framework explainer</div>
+            <p class="lib-desc">Authoritative-but-friendly 8-tweet thread teaching a single framework. One example per tweet.</p>
+            <div class="lib-meta"><span>Used 9 times</span><span>Today</span></div>
+          </div>
+          <div class="lib-card">
+            <div class="lib-tag" style="color:var(--gm-clay-dk)">📥 The Drop · Personal</div>
+            <div class="lib-title">Tidy a voice-memo brain-dump</div>
+            <p class="lib-desc">Take a raw voice memo transcript and pull the actionable bits into a 5-item to-do.</p>
+            <div class="lib-meta"><span>Used 12 times</span><span>Yesterday</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content-inner -->
+  </section>
+
+</main>
+
+<script>
+const TOOLS = {
+  drop:    { name: 'The Drop',      sub: 'Smart-paste · auto-build a prompt',         color: 'var(--gm-clay)'   },
+  mirror:  { name: 'Mirror It',     sub: 'Reverse-engineer a prompt from any output', color: 'var(--gm-lav)'    },
+  sort:    { name: 'Sort It Out',   sub: 'A pile of stuff into a clean plan',         color: 'var(--gm-sage)'   },
+  make:    { name: 'Make It',       sub: 'The manual crafter — built your way',       color: 'var(--gm-sky)'    },
+  just:    { name: 'Just Tell Me',  sub: 'Plain-language goal → we pick the tool',    color: 'var(--gm-yellow)' },
+  library: { name: 'My Good Stuff', sub: 'Your saved prompts, by life area',          color: 'var(--gm-dust)'   },
+};
+
+const links   = document.querySelectorAll('.tool-link');
+const panels  = document.querySelectorAll('.panel');
+const cTitle  = document.getElementById('crumbTitle');
+const cSub    = document.getElementById('crumbSub');
+const cSwatch = document.getElementById('crumbSwatch');
+
+function show(tool) {
+  if (!TOOLS[tool]) return;
+  links.forEach(l => l.classList.toggle('active', l.dataset.tool === tool));
+  panels.forEach(p => p.classList.toggle('active', p.dataset.panel === tool));
+  cTitle.textContent = TOOLS[tool].name;
+  cSub.textContent   = TOOLS[tool].sub;
+  cSwatch.style.background = TOOLS[tool].color;
+  history.replaceState(null, '', '#' + tool);
+}
+
+links.forEach(l => l.addEventListener('click', () => show(l.dataset.tool)));
+
+// Tone chip toggle in Make It
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const row = chip.closest('.chip-row');
+    if (row) row.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+    chip.classList.add('on');
+  });
+});
+
+// Library filter chips (multi-select or all-reset)
+const libChips = document.querySelectorAll('[data-panel="library"] .chip');
+libChips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    if (chip.textContent.trim() === 'All') {
+      libChips.forEach(c => c.classList.remove('on'));
+      chip.classList.add('on');
+    } else {
+      libChips[0].classList.remove('on');
+      chip.classList.toggle('on');
+      if (!document.querySelector('[data-panel="library"] .chip.on')) {
+        libChips[0].classList.add('on');
+      }
+    }
+  });
+});
+
+// Deep-link on load
+const hash = (location.hash || '#drop').slice(1);
+show(hash in TOOLS ? hash : 'drop');
+</script>
+
+</body>
+</html>

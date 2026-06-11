@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 140" width="520" height="140">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,700;1,400&amp;display=swap');
+      .got  { font-family:'Lora',serif; font-style:italic; font-weight:400; font-size:20px; fill:#C4B5A0; }
+      .messy{ font-family:'Lora',serif; font-style:normal; font-weight:700; font-size:68px; fill:#FAF7F2; }
+      .dot  { font-family:'Lora',serif; font-style:normal; font-weight:700; font-size:76px; fill:#C4673A; }
+    </style>
+  </defs>
+  <rect width="520" height="140" fill="#1A1612"/>
+  <!-- Icon block shadow -->
+  <rect x="18" y="22" width="96" height="96" rx="22" fill="#9B4A28"/>
+  <!-- Icon block -->
+  <rect x="12" y="16" width="96" height="96" rx="22" fill="#C4673A"/>
+  <!-- Three lines -->
+  <rect x="28" y="38" width="62" height="8"  rx="3" fill="white" opacity="0.9"/>
+  <rect x="28" y="58" width="46" height="8"  rx="3" fill="white" opacity="0.9"/>
+  <rect x="28" y="78" width="32" height="8"  rx="3" fill="white" opacity="0.9"/>
+  <!-- Ink dot -->
+  <circle cx="90" cy="98" r="8" fill="#1A1612"/>
+  <!-- Wordmark -->
+  <text class="got"   x="124" y="56">got</text>
+  <text class="messy" x="120" y="118">messy</text>
+  <text class="dot"   x="432" y="112">.</text>
+</svg>

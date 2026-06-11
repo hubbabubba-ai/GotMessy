@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Got Messy &mdash; App Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FAF7F2;--warm:#F2EDE4;--ink:#1A1612;--ink-soft:#3D3530;
+  --dust:#C4B5A0;--clay:#C4673A;--clay-dk:#9B4A28;--clay-lt:#E8896A;
+  --sage:#5C7A62;--lav:#8B7BAB;--sky:#5B8FA8;--yellow:#E8C84A;
+  --card:#1E1A16;--card-bd:rgba(255,255,255,0.08);
+}
+html{scroll-behavior:smooth;color-scheme:dark;background:#1A1612}
+body{font-family:'Poppins',sans-serif;background:#1A1612 !important;color:#FAF7F2 !important;font-size:14px;line-height:1.65;-webkit-text-size-adjust:100%}
+
+nav.top-nav{position:sticky;top:0;z-index:100;background:#100E0B;border-bottom:1px solid rgba(255,255,255,.06);padding:0 32px;display:flex;justify-content:space-between;align-items:center;height:52px}
+.nav-logo{font-family:'Lora',serif;font-size:15px;font-weight:700;display:flex;align-items:baseline;gap:3px}
+.nav-logo .got{font-style:italic;font-weight:400;color:var(--dust);font-size:12px}
+.nav-logo .dot{color:var(--clay)}
+.nav-links{display:flex;gap:18px;font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.nav-links a{color:var(--dust);text-decoration:none;transition:color .18s}
+.nav-links a:hover{color:var(--cream)}
+.nav-back{font-size:11px;font-weight:600;color:var(--dust);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .18s;padding:6px 12px;border-radius:7px;border:1px solid rgba(255,255,255,.08)}
+.nav-back:hover{color:var(--cream);background:rgba(255,255,255,.06)}
+
+.page{max-width:1100px;margin:0 auto;padding:0 32px}
+
+.hero{background:var(--ink);padding:72px 0 56px;position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06)}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 50% at 88% 18%,rgba(196,103,58,.14) 0%,transparent 70%),radial-gradient(ellipse 40% 55% at 10% 85%,rgba(91,143,168,.1) 0%,transparent 60%)}
+.hero-inner{position:relative;z-index:2}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(196,103,58,.14);border:1px solid rgba(196,103,58,.32);border-radius:100px;padding:5px 14px;font-size:.72rem;font-weight:600;letter-spacing:.06em;color:var(--clay-lt);margin-bottom:26px}
+.hero h1{font-family:'Lora',serif;font-size:clamp(2.6rem,6vw,4.6rem);font-weight:700;color:var(--cream);line-height:1.05;margin-bottom:6px}
+.hero h1 em{font-style:italic;color:var(--clay);font-weight:400}
+.hero h1 .dot{color:var(--clay)}
+.hero-sub{font-size:clamp(.95rem,2vw,1.08rem);color:var(--dust);max-width:660px;margin:18px 0 12px;font-weight:300;line-height:1.75}
+.hero-sub strong{color:var(--cream);font-weight:500}
+.hero-extends{font-size:.78rem;color:var(--dust);margin-top:12px;font-weight:300;font-style:italic}
+.hero-extends a{color:var(--clay-lt);text-decoration:none}
+.hero-extends a:hover{color:var(--clay)}
+
+main{padding:56px 0}
+section.s{margin-bottom:56px;scroll-margin-top:60px}
+.sec-label{font-size:.65rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dust);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-label::before{content:'\25CF';color:var(--clay);font-size:.5rem}
+.sec-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+section.s h2{font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--cream);margin-bottom:8px;letter-spacing:-.01em}
+section.s h2 em{font-style:italic;color:var(--clay);font-weight:400}
+section.s .lede{color:var(--dust);font-weight:300;line-height:1.75;max-width:740px;margin-bottom:22px}
+section.s h3{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--cream);margin:18px 0 10px;letter-spacing:-.01em}
+section.s p{color:var(--dust);font-weight:300;line-height:1.75;margin-bottom:10px}
+section.s p strong{color:var(--cream);font-weight:500}
+
+.card{background:var(--card);border:1px solid var(--card-bd);border-radius:14px;padding:22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+.tile{padding:16px;border-radius:11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07)}
+.tile h3{font-family:'Lora',serif;font-weight:700;font-size:.95rem;color:var(--cream);margin-bottom:6px;margin-top:8px}
+.tile p{font-size:.82rem;color:var(--dust);font-weight:300;line-height:1.65;margin:0}
+
+.badge{font-size:.62rem;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:5px;text-transform:uppercase}
+.b-clay{background:rgba(196,103,58,.18);color:var(--clay-lt)}
+.b-sage{background:rgba(92,122,98,.2);color:#8FAF96}
+.b-sky{background:rgba(91,143,168,.2);color:#9FC1D4}
+.b-dust{background:rgba(196,181,160,.14);color:var(--dust)}
+
+.callout{padding:16px 18px;border-radius:11px;background:rgba(232,200,74,.07);border:1px solid rgba(232,200,74,.22);font-size:.86rem;color:var(--cream);line-height:1.65;margin:14px 0}
+.callout strong{color:var(--yellow);font-weight:600}
+.callout.clay{background:rgba(196,103,58,.08);border-color:rgba(196,103,58,.28)}
+.callout.clay strong{color:var(--clay-lt)}
+
+/* Tab bar */
+.tab-bar{display:flex;gap:0;background:var(--card);border:1px solid var(--card-bd);border-bottom:none;border-radius:10px 10px 0 0;overflow:hidden}
+.tab-btn{flex:1;padding:11px 16px;background:transparent;color:var(--dust);font-family:'Poppins',sans-serif;font-size:.76rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color .18s,border-color .18s}
+.tab-btn[aria-selected="true"]{color:var(--clay-lt);border-bottom-color:var(--clay)}
+.tab-btn:hover:not([aria-selected="true"]){color:var(--cream)}
+.tab-btn:focus-visible{outline:2px solid var(--clay-lt);outline-offset:-2px}
+.tab-panel{display:none;padding:24px;background:var(--card);border:1px solid var(--card-bd);border-top:none;border-radius:0 0 10px 10px}
+.tab-panel.active{display:block}
+.tab-panel .card h3{margin-top:0}
+
+/* Feature list inside tab panels */
+.feat-list{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px}
+.feat-list li{font-size:.83rem;color:var(--dust);font-weight:300;line-height:1.55;padding-left:16px;position:relative}
+.feat-list li::before{content:'';position:absolute;left:0;top:.55em;width:6px;height:1px;background:var(--clay-lt)}
+.feat-list li strong{color:var(--cream);font-weight:500}
+
+code{font-family:Menlo,Consolas,monospace;font-size:.78rem;color:var(--clay-lt);background:rgba(196,103,58,.08);padding:1px 6px;border-radius:4px}
+
+/* Priority rows */
+.priority-group{margin-bottom:22px}
+.priority-group:last-child{margin-bottom:0}
+.priority-group h3{margin-top:0;margin-bottom:12px}
+.priority-group+.priority-group h3{margin-top:22px}
+.priority-row{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.priority-row:last-child{border-bottom:none}
+.priority-row .badge{flex-shrink:0;margin-top:2px}
+.priority-text{font-size:.84rem;color:var(--dust);font-weight:300;line-height:1.6}
+.priority-text strong{color:var(--cream);font-weight:500}
+
+/* Recommendations */
+.rec-list{display:flex;flex-direction:column;gap:24px;margin-top:6px}
+.rec-item{display:flex;gap:22px;align-items:flex-start}
+.rec-num{font-family:'Lora',serif;font-weight:700;font-size:2.2rem;color:var(--clay);flex-shrink:0;line-height:1;margin-top:2px}
+.rec-body{flex:1}
+.rec-body h3{font-family:'Lora',serif;font-weight:700;font-size:1rem;color:var(--cream);margin:0 0 8px;letter-spacing:-.01em}
+.rec-body p{font-size:.88rem;color:var(--dust);font-weight:300;line-height:1.7;margin:0}
+.rec-body p strong{color:var(--cream);font-weight:500}
+
+footer{padding:38px 0 56px;border-top:1px solid rgba(255,255,255,.06);font-size:.76rem;color:var(--dust);font-weight:300;text-align:center}
+footer .ver{color:var(--clay-lt)}
+footer a{color:var(--clay-lt);text-decoration:none}
+footer a:hover{color:var(--cream)}
+
+@media(max-width:720px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .tab-bar{flex-wrap:wrap}
+  .tab-btn{flex:1 1 calc(50% - 1px);min-width:0;font-size:.68rem;padding:10px 8px}
+  .rec-item{flex-direction:column;gap:8px}
+  .rec-num{font-size:1.4rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav" aria-label="Page navigation">
+  <div class="nav-logo" aria-hidden="true">
+    <span class="got">got</span><span>Messy</span><span class="dot">.</span>
+  </div>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#architect">The Architect</a>
+    <a href="#priority">Priority</a>
+    <a href="#strategy">Strategy</a>
+  </div>
+  <a href="gotmessy-hub.html" class="nav-back">&larr; Project Hub</a>
+</nav>
+
+<header class="hero">
+  <div class="page hero-inner">
+    <div class="hero-eyebrow">&#9670; App Architecture &middot; v1.0 &middot; Product view</div>
+    <h1>Hub &amp; Spoke &mdash;<br>how <em>Got Messy</em> is structured<span class="dot">.</span></h1>
+    <p class="hero-sub">Four surfaces. <strong>One engine.</strong> The Architect takes messy raw input through four phases and produces a prompt the user can actually run.</p>
+    <p class="hero-extends">Product counterpart to the <a href="gotmessy-system-design.html">System Design document</a>. For engineering decisions, the system design wins.</p>
+  </div>
+</header>
+
+<main>
+<div class="page">
+
+<!-- 01 OVERVIEW -->
+<section class="s" id="overview">
+  <div class="sec-label">01 &middot; Hub &amp; Spoke Overview</div>
+  <h2>Four surfaces, <em>one navigation.</em></h2>
+  <p class="lede">A single bottom tab bar connects the Dashboard, The Architect, The Vault, and Settings. Every flow begins and ends at The Architect &mdash; the other surfaces orbit it.</p>
+
+  <div class="g4">
+    <div class="tile">
+      <span class="badge b-clay">1.0 &middot; Hub</span>
+      <h3>Home Dashboard</h3>
+      <p>Quick Actions, Recent Projects, Daily Challenge.</p>
+    </div>
+    <div class="tile">
+      <span class="badge b-sage">2.0 &middot; Core</span>
+      <h3>The Architect</h3>
+      <p>Four-phase prompt builder. The MVP engine.</p>
+    </div>
+    <div class="tile">
+      <span class="badge b-sky">3.0 &middot; Library</span>
+      <h3>The Vault</h3>
+      <p>My Templates, Community Recipes, Favourites.</p>
+    </div>
+    <div class="tile">
+      <span class="badge b-dust">4.0 &middot; Config</span>
+      <h3>Settings &amp; Profile</h3>
+      <p>API Config, Default Persona, Credits.</p>
+    </div>
+  </div>
+
+  <div class="callout clay" style="margin-top:18px">
+    <strong>MVP scope:</strong> Ship The Architect (2.0) before anything else. The Vault and Dashboard only gain value when there is prior work to surface.
+  </div>
+</section>
+
+<!-- 02 THE ARCHITECT -->
+<section class="s" id="architect">
+  <div class="sec-label">02 &middot; The Architect &mdash; Four Phases</div>
+  <h2>From messy input to <em>ready-to-run prompt.</em></h2>
+  <p class="lede">The Architect is the core MVP spoke. It walks through four phases: paste raw input, structure it into three pillars, validate with a test run, then export.</p>
+
+  <div class="tab-bar" role="tablist" aria-label="Architect phases">
+    <button class="tab-btn" role="tab" aria-selected="true" aria-controls="phase1-panel" id="phase1-tab" type="button">Phase 1 &middot; Input</button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="phase2-panel" id="phase2-tab" type="button">Phase 2 &middot; Structure</button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="phase3-panel" id="phase3-tab" type="button">Phase 3 &middot; Validation</button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="phase4-panel" id="phase4-tab" type="button">Phase 4 &middot; Export</button>
+  </div>
+
+  <div id="phase1-panel" class="tab-panel active" role="tabpanel" aria-labelledby="phase1-tab">
+    <div class="g2">
+      <div class="card">
+        <h3>2.1.1 &mdash; The Dump Zone</h3>
+        <p>Drop raw text here. No format required. Paste an email, a meeting note, a scribble &mdash; anything that holds the germ of what you need.</p>
+        <ul class="feat-list">
+          <li>Accepts plain text from any source</li>
+          <li>iOS and Android share-sheet compatible</li>
+          <li>No minimum structure required from the user</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2.1.2 &mdash; Intent Classifier</h3>
+        <p>NLP detection maps pasted content to persona signals, task actions, and format keywords. The output seeds the Triple-Pillar editor.</p>
+        <ul class="feat-list">
+          <li>Runs via LLM Gateway in JSON mode</li>
+          <li>Produces a Persona / Task / Format suggestion</li>
+          <li>User can accept, edit, or start from scratch</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="phase2-panel" class="tab-panel" role="tabpanel" aria-labelledby="phase2-tab">
+    <div class="g2">
+      <div class="card">
+        <h3>2.2.1 &mdash; Persona Selector</h3>
+        <p>Who is running this prompt? Pick a role or describe your own. Anchors the model's voice and expertise frame.</p>
+        <ul class="feat-list">
+          <li>Pre-built role library: writer, analyst, coach, and others</li>
+          <li>Free-text custom persona option</li>
+          <li>Persists as Default Persona in Settings</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2.2.2 &mdash; Task Definer</h3>
+        <p>What is the prompt trying to do? A single, clear action phrase per task. The most common source of vague outputs.</p>
+        <ul class="feat-list">
+          <li>Action-verb-first validation hint shown</li>
+          <li>Suggested task from Intent Classifier pre-filled</li>
+          <li>One task per prompt, by design</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2.2.3 &mdash; Format Gallery</h3>
+        <p>How should the output look? A card-based visual picker that reduces the cognitive load of the Format pillar.</p>
+        <ul class="feat-list">
+          <li>Paragraph, bullet list, table, JSON, email, script</li>
+          <li>Visual card layout, tap to select</li>
+          <li>Custom format via free-text override</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2.2.4 &mdash; Context Manager</h3>
+        <p>Optional attachments that give the model the background it needs. Constraints, examples, and reference material go here.</p>
+        <ul class="feat-list">
+          <li>Free-text context blocks</li>
+          <li>Example input/output pairs</li>
+          <li>Hard constraints on the output</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="phase3-panel" class="tab-panel" role="tabpanel" aria-labelledby="phase3-tab">
+    <div class="g3">
+      <div class="card">
+        <h3>2.3.1 &mdash; Split-Screen Simulator</h3>
+        <p>Run the assembled prompt against the selected model. See the raw output alongside the prompt in one view, closing the feedback loop inside the app.</p>
+        <ul class="feat-list">
+          <li>SSE streaming &mdash; no silent waits on mobile</li>
+          <li>Uses the user's selected provider from Settings</li>
+          <li>Output displayed without reformatting</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2.3.2 &mdash; Variable Injector</h3>
+        <p>Replace placeholder tokens in the prompt with real values before running. One tap per variable, turning prompts into repeatable templates.</p>
+        <ul class="feat-list">
+          <li>Auto-detected from <code>{{variable}}</code> syntax</li>
+          <li>Fill-in form generated at Test Flight time</li>
+          <li>Variables saved with the template in The Vault</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2.3.3 &mdash; Hallucination Check</h3>
+        <p>A risk score that flags likely confabulation in the output. Requires a second model call &mdash; scoped to V2, not in the MVP.</p>
+        <ul class="feat-list">
+          <li>Dual-model agreement scoring</li>
+          <li>Risk score displayed alongside output</li>
+          <li><strong>Status: V2 &mdash; deferred from MVP scope</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="phase4-panel" class="tab-panel" role="tabpanel" aria-labelledby="phase4-tab">
+    <div class="g3">
+      <div class="card">
+        <h3>2.4.1 &mdash; Copy to Clipboard</h3>
+        <p>One tap. The full assembled prompt, ready to paste into any LLM interface the user already uses.</p>
+        <ul class="feat-list">
+          <li>Copies the final rendered prompt string</li>
+          <li>Variables replaced with injected values at copy time</li>
+          <li>Available from any point after pillar completion</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2.4.2 &mdash; Save to Library</h3>
+        <p>Saves to The Vault as a personal template. Title and tags are optional at save time &mdash; can be added later.</p>
+        <ul class="feat-list">
+          <li>Draft status moves to <code>exported</code></li>
+          <li>Stored in My Good Stuff (private by default)</li>
+          <li>Forkable as a Community Recipe later</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2.4.3 &mdash; Share</h3>
+        <p>Deep links that open the prompt in the user's chosen LLM with one tap, ready to run without paste required.</p>
+        <ul class="feat-list">
+          <li>ChatGPT, Claude, Gemini deep-link targets</li>
+          <li>Share sheet for mobile native sharing</li>
+          <li>Shareable link to the Vault template</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 PRIORITY -->
+<section class="s" id="priority">
+  <div class="sec-label">03 &middot; Feature Priority Hierarchy</div>
+  <h2>What ships first, <em>and why.</em></h2>
+  <p class="lede">Features are ordered by user impact and MVP scope. The first two are load-bearing &mdash; nothing else matters until they work reliably.</p>
+
+  <div class="card">
+    <div class="priority-group">
+      <h3>Critical &mdash; must ship at launch</h3>
+      <div class="priority-row">
+        <span class="badge b-clay">Critical</span>
+        <div class="priority-text"><strong>Smart Paste / Intent Classifier</strong> &mdash; turns raw input into structured pillars without manual typing. Without this, the app is just a form.</div>
+      </div>
+      <div class="priority-row">
+        <span class="badge b-clay">Critical</span>
+        <div class="priority-text"><strong>Triple-Pillar Editor</strong> &mdash; Persona, Task, and Format fields with validation before Test Flight is allowed. This is the product.</div>
+      </div>
+    </div>
+
+    <div class="priority-group">
+      <h3>High &mdash; launch window</h3>
+      <div class="priority-row">
+        <span class="badge b-sage">High</span>
+        <div class="priority-text"><strong>Smart Start</strong> &mdash; one-tap guided session for first-time users, bypassing the Dashboard and going straight to The Architect.</div>
+      </div>
+      <div class="priority-row">
+        <span class="badge b-sage">High</span>
+        <div class="priority-text"><strong>Visual Format Gallery</strong> &mdash; card-based format picker that reduces the cognitive load of choosing an output format.</div>
+      </div>
+      <div class="priority-row">
+        <span class="badge b-sage">High</span>
+        <div class="priority-text"><strong>Test Flight Simulator</strong> &mdash; split-screen output view that closes the feedback loop inside the app, not in a separate LLM tab.</div>
+      </div>
+    </div>
+
+    <div class="priority-group">
+      <h3>Medium &mdash; post-launch</h3>
+      <div class="priority-row">
+        <span class="badge b-sky">Medium</span>
+        <div class="priority-text"><strong>Recent Projects</strong> &mdash; last five drafts on the Dashboard, with a Resume action. Reduces re-work for returning users.</div>
+      </div>
+      <div class="priority-row">
+        <span class="badge b-sky">Medium</span>
+        <div class="priority-text"><strong>Variable Injection</strong> &mdash; token replacement before Test Flight, turning one-off prompts into repeatable fill-in-the-blanks templates.</div>
+      </div>
+      <div class="priority-row">
+        <span class="badge b-sky">Medium</span>
+        <div class="priority-text"><strong>Recipe Book</strong> &mdash; Community Recipes browseable in The Vault. Requires moderation infrastructure before going public.</div>
+      </div>
+    </div>
+
+    <div class="priority-group">
+      <h3>V2 &mdash; deferred</h3>
+      <div class="priority-row">
+        <span class="badge b-dust">V2</span>
+        <div class="priority-text"><strong>Hallucination Scorer</strong> &mdash; risk flag on Test Flight output. Requires a second model call and a scoring methodology that needs human-eval validation first.</div>
+      </div>
+      <div class="priority-row">
+        <span class="badge b-dust">V2</span>
+        <div class="priority-text"><strong>Model Toggle</strong> &mdash; provider selection in Settings, blocked on the LLM Gateway being production-ready. BYOK is Phase 2 per the system design.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 STRATEGY -->
+<section class="s" id="strategy">
+  <div class="sec-label">04 &middot; Strategic Recommendations</div>
+  <h2>Three decisions that shape <em>the whole product.</em></h2>
+  <p class="lede">These are framing decisions, not features. They affect every surface and must be settled before detailed design begins.</p>
+
+  <div class="rec-list">
+    <div class="rec-item">
+      <div class="rec-num" aria-hidden="true">1</div>
+      <div class="rec-body">
+        <h3>MVP Focus: Smart Paste + Triple-Pillar Editor</h3>
+        <p>Phases 2.1 and 2.2 are the product. Without a reliable path from messy input to structured pillars, the rest of the app has nothing to test. <strong>Ship these two phases before adding anything else.</strong> The Vault only has value when there is something to save.</p>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num" aria-hidden="true">2</div>
+      <div class="rec-body">
+        <h3>Navigation: bottom tab bar with four destinations</h3>
+        <p>Dashboard, Architect, Library, Settings. Four tabs maps exactly to the four surfaces. Keep the structure flat at launch &mdash; no nested navigation until The Vault needs filtering at scale.</p>
+      </div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num" aria-hidden="true">3</div>
+      <div class="rec-body">
+        <h3>Onboarding: first launch goes straight to The Architect</h3>
+        <p>A guided session on first open, bypassing the Dashboard entirely. <strong>The Dashboard's value depends on prior work existing.</strong> Show the Dashboard when there is something to show.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+  Got Messy &middot; App Architecture &middot; <span class="ver">v1.0</span>
+  &middot; See also:
+  <a href="gotmessy-system-design.html">System Design</a>
+  &middot;
+  <a href="gotmessy-brand-guidelines.html">Brand Guidelines</a>
+</footer>
+
+<script>
+(function () {
+  var tabs = document.querySelectorAll('[role="tab"]');
+  var panels = document.querySelectorAll('[role="tabpanel"]');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) { t.setAttribute('aria-selected', 'false'); });
+      panels.forEach(function (p) { p.classList.remove('active'); });
+      tab.setAttribute('aria-selected', 'true');
+      var target = document.getElementById(tab.getAttribute('aria-controls'));
+      if (target) { target.classList.add('active'); }
+    });
+    tab.addEventListener('keydown', function (e) {
+      var idx = Array.prototype.indexOf.call(tabs, tab);
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        var next = tabs[(idx + 1) % tabs.length];
+        next.focus();
+        next.click();
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        var prev = tabs[(idx + tabs.length - 1) % tabs.length];
+        prev.focus();
+        prev.click();
+      }
+    });
+  });
+}());
+</script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "timeout": 30000,
+    "wait": 500,
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+    }
+  },
+  "urls": [
+    "http://localhost:8080/packages/brand/index.html",
+    "http://localhost:8080/packages/brand/Final/gotmessy-brand-guidelines.html",
+    "http://localhost:8080/packages/brand/Final/gotmessy-system-design.html",
+    "http://localhost:8080/packages/brand/Final/prompt-architect-infographic-final.html"
+  ]
+}

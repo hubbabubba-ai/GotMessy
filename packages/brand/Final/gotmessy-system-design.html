@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Got Messy — System Design</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#FAF7F2;--warm:#F2EDE4;--ink:#1A1612;--ink-soft:#3D3530;
+  --dust:#C4B5A0;--clay:#C4673A;--clay-dk:#9B4A28;--clay-lt:#E8896A;
+  --sage:#5C7A62;--lav:#8B7BAB;--sky:#5B8FA8;--yellow:#E8C84A;
+  --card:#1E1A16;--card-bd:rgba(255,255,255,0.08);
+  --mono:'JetBrains Mono',Menlo,monospace;
+}
+html{scroll-behavior:smooth;color-scheme:dark;background:#1A1612}
+body{font-family:'Poppins',sans-serif;background:#1A1612 !important;color:#FAF7F2 !important;font-size:14px;line-height:1.65;-webkit-text-size-adjust:100%}
+
+nav.top-nav{position:sticky;top:0;z-index:100;background:#100E0B;border-bottom:1px solid rgba(255,255,255,.06);padding:0 32px;display:flex;justify-content:space-between;align-items:center;height:52px}
+.nav-logo{font-family:'Lora',serif;font-size:15px;font-weight:700;display:flex;align-items:baseline;gap:3px}
+.nav-logo .got{font-style:italic;font-weight:400;color:var(--dust);font-size:12px}
+.nav-logo .dot{color:var(--clay)}
+.nav-links{display:flex;gap:18px;font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.nav-links a{color:var(--dust);text-decoration:none;transition:color .18s}
+.nav-links a:hover{color:var(--cream)}
+.nav-back{font-size:11px;font-weight:600;color:var(--dust);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .18s;padding:6px 12px;border-radius:7px;border:1px solid rgba(255,255,255,.08)}
+.nav-back:hover{color:var(--cream);background:rgba(255,255,255,.06)}
+
+.page{max-width:1100px;margin:0 auto;padding:0 32px}
+
+.hero{background:var(--ink);padding:72px 0 56px;position:relative;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.06)}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 50% at 88% 18%,rgba(91,143,168,.14) 0%,transparent 70%),radial-gradient(ellipse 40% 55% at 10% 85%,rgba(196,103,58,.12) 0%,transparent 60%)}
+.hero-inner{position:relative;z-index:2}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(91,143,168,.14);border:1px solid rgba(91,143,168,.32);border-radius:100px;padding:5px 14px;font-size:.72rem;font-weight:600;letter-spacing:.06em;color:#9FC1D4;margin-bottom:26px}
+.hero h1{font-family:'Lora',serif;font-size:clamp(2.6rem,6vw,4.6rem);font-weight:700;color:var(--cream);line-height:1.05;margin-bottom:6px}
+.hero h1 em{font-style:italic;color:var(--clay);font-weight:400}
+.hero h1 .dot{color:var(--clay)}
+.hero-sub{font-size:clamp(.95rem,2vw,1.08rem);color:var(--dust);max-width:660px;margin:18px 0 12px;font-weight:300;line-height:1.75}
+.hero-sub strong{color:var(--cream);font-weight:500}
+.hero-extends{font-size:.78rem;color:var(--dust);margin-top:12px;font-weight:300;font-style:italic}
+.hero-extends a{color:var(--clay-lt);text-decoration:none}
+.hero-extends a:hover{color:var(--clay)}
+
+main{padding:56px 0}
+section.s{margin-bottom:56px;scroll-margin-top:60px}
+.sec-label{font-size:.65rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dust);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-label::before{content:'●';color:var(--clay);font-size:.5rem}
+.sec-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+section.s h2{font-family:'Lora',serif;font-size:1.6rem;font-weight:700;color:var(--cream);margin-bottom:8px;letter-spacing:-.01em}
+section.s h2 em{font-style:italic;color:var(--clay);font-weight:400}
+section.s .lede{color:var(--dust);font-weight:300;line-height:1.75;max-width:740px;margin-bottom:22px}
+section.s h3{font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--cream);margin:18px 0 10px;letter-spacing:-.01em}
+section.s p{color:var(--dust);font-weight:300;line-height:1.75;margin-bottom:10px}
+section.s p strong{color:var(--cream);font-weight:500}
+
+.card{background:var(--card);border:1px solid var(--card-bd);border-radius:14px;padding:22px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+table.gm{width:100%;border-collapse:collapse;font-size:.84rem;margin:12px 0}
+table.gm th,table.gm td{text-align:left;padding:11px 13px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:var(--dust);font-weight:300}
+table.gm th{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dust);background:rgba(255,255,255,.02);border-bottom-color:rgba(255,255,255,.1)}
+table.gm td strong{color:var(--cream);font-weight:500}
+code{font-family:var(--mono);font-size:.78rem;color:var(--clay-lt);background:rgba(196,103,58,.08);padding:1px 6px;border-radius:4px}
+pre{background:#100E0B;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:18px;overflow-x:auto;font-family:var(--mono);font-size:.78rem;line-height:1.55;color:var(--cream);margin:14px 0}
+pre code{background:none;color:inherit;padding:0;font-size:inherit}
+
+.callout{padding:16px 18px;border-radius:11px;background:rgba(232,200,74,.07);border:1px solid rgba(232,200,74,.22);font-size:.86rem;color:var(--cream);line-height:1.65;margin:14px 0}
+.callout strong{color:var(--yellow);font-weight:600}
+.callout.clay{background:rgba(196,103,58,.08);border-color:rgba(196,103,58,.28)}
+.callout.clay strong{color:var(--clay-lt)}
+
+.tile{padding:16px;border-radius:11px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07)}
+.tile h4{font-family:'Lora',serif;font-weight:700;font-size:.95rem;color:var(--cream);margin-bottom:6px}
+.tile p{font-size:.82rem;color:var(--dust);font-weight:300;line-height:1.65;margin:0}
+
+.badge{font-size:.62rem;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:5px;text-transform:uppercase}
+.b-clay{background:rgba(196,103,58,.18);color:var(--clay-lt)}
+.b-sage{background:rgba(92,122,98,.2);color:#8FAF96}
+.b-lav{background:rgba(139,123,171,.2);color:#B8ADCF}
+.b-sky{background:rgba(91,143,168,.2);color:#9FC1D4}
+.b-yellow{background:rgba(232,200,74,.18);color:var(--yellow)}
+.b-dust{background:rgba(196,181,160,.14);color:var(--dust)}
+
+.phase-row{display:grid;grid-template-columns:60px 1fr 1.4fr 1fr;gap:14px;align-items:start;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.phase-row:last-child{border-bottom:none}
+.phase-num{font-family:'Lora',serif;font-weight:700;font-size:1.5rem;color:var(--clay)}
+.phase-name{font-family:'Lora',serif;font-weight:700;color:var(--cream);font-size:.95rem;margin-bottom:3px}
+.phase-tag{font-size:.62rem;color:var(--dust);font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.phase-desc{font-size:.84rem;color:var(--dust);font-weight:300;line-height:1.6}
+.phase-exit{font-size:.78rem;color:var(--cream);font-weight:300;line-height:1.55;font-style:italic}
+.phase-exit::before{content:'Exit · ';color:var(--clay-lt);font-style:normal;font-weight:600;letter-spacing:.04em;font-size:.6rem;text-transform:uppercase;display:block;margin-bottom:2px}
+
+footer{padding:38px 0 56px;border-top:1px solid rgba(255,255,255,.06);font-size:.76rem;color:var(--dust);font-weight:300;text-align:center}
+footer .ver{color:var(--clay-lt)}
+
+@media(max-width:720px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .phase-row{grid-template-columns:1fr;gap:6px}
+  table.gm{font-size:.78rem}
+  pre{font-size:.7rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-logo"><span class="got">got</span><span>Messy</span><span class="dot">.</span></div>
+  <div class="nav-links">
+    <a href="#arch">Architecture</a>
+    <a href="#components">Components</a>
+    <a href="#data">Data</a>
+    <a href="#gateway">LLM Gateway</a>
+    <a href="#security">Security</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+  <a href="gotmessy-hub.html" class="nav-back">← Project Hub</a>
+</nav>
+
+<header class="hero">
+  <div class="page hero-inner">
+    <div class="hero-eyebrow">⚙ System Design · v1.0 · Engineering view</div>
+    <h1>How <em>Got Messy</em><br>is actually built<span class="dot">.</span></h1>
+    <p class="hero-sub">The infographic shows the <strong>product</strong>: Hub &amp; Spoke, four phases, mobile-first. This shows the <strong>system</strong>: services, data model, the LLM Gateway, PII boundaries, build phases.</p>
+    <p class="hero-extends">Counterpart to the <a href="prompt-architect-infographic-final.html">App Architecture infographic</a>. For engineering decisions, this document wins.</p>
+  </div>
+</header>
+
+<main>
+<div class="page">
+
+<!-- 1. RECAP -->
+<section class="s" id="recap">
+  <div class="sec-label">01 · Product Recap</div>
+  <h2>Mobile-first prompt engineering for non-technical creators</h2>
+  <p class="lede">Got Messy accepts messy raw input — text, PDFs, URLs — and produces validated, reusable prompt templates the user can run on the LLM of their choice. Hub &amp; Spoke surface; The Architect is the engine.</p>
+
+  <div class="g4">
+    <div class="tile"><span class="badge b-clay">1.0 · Hub</span><h4 style="margin-top:8px">Home Dashboard</h4><p>Index, recent activity, quick start.</p></div>
+    <div class="tile"><span class="badge b-clay">2.0 · Core</span><h4 style="margin-top:8px">The Architect</h4><p>Four-phase prompt builder. The MVP.</p></div>
+    <div class="tile"><span class="badge b-yellow">3.0 · Library</span><h4 style="margin-top:8px">The Vault</h4><p>My Good Stuff, Community Recipes, Favourites.</p></div>
+    <div class="tile"><span class="badge b-dust">4.0 · Config</span><h4 style="margin-top:8px">Settings</h4><p>Model toggle, User DNA, BYOK keys.</p></div>
+  </div>
+</section>
+
+<!-- 2. ARCHITECTURE -->
+<section class="s" id="arch">
+  <div class="sec-label">02 · Architecture at a Glance</div>
+  <h2>One client. One BFF. Three internal services. <em>One gateway.</em></h2>
+  <p class="lede">Single-codebase client (RN + RN Web). Thin BFF for auth, rate-limit, routing. Three internal services — Smart Paste, Architect, Vault — all reach providers through one LLM Gateway.</p>
+
+<pre><code>┌───────────────────────────────────────────────────────────────────┐
+│                        Mobile / Web Client                        │
+│            (React Native + RN Web · Expo · Next.js)               │
+└──────────────────────┬──────────────────────────┬─────────────────┘
+                       │ HTTPS / JSON             │ Auth (OAuth + email)
+                       ▼                          ▼
+              ┌─────────────────┐        ┌──────────────────┐
+              │   API Gateway   │◄──────►│  Identity (IdP)  │
+              │ (Edge / BFF)    │        │  Clerk / Auth0   │
+              └────────┬────────┘        └──────────────────┘
+                       │
+   ┌───────────────────┼─────────────────────────────┐
+   ▼                   ▼                             ▼
+┌─────────┐    ┌─────────────────┐         ┌──────────────────┐
+│  Smart  │    │   Architect /   │         │   Vault / Tags   │
+│  Paste  │◄──►│   Triple-Pillar │◄───────►│   (CRUD store)   │
+│ Service │    │   Service       │         └────────┬─────────┘
+└────┬────┘    └────────┬────────┘                  │
+     │                  │                           │
+     │   ┌──────────────┴─────────────┐             │
+     ▼   ▼                            ▼             ▼
+┌────────────┐              ┌──────────────────┐  ┌──────────┐
+│ NLP/Intent │              │  LLM Gateway     │  │ Postgres │
+│ Classifier │              │  (multi-provider │  │  + pgvec │
+│ + PII guard│              │   router/cache)  │  │          │
+└─────┬──────┘              └────────┬─────────┘  └──────────┘
+      │                              │
+      │                  ┌───────────┼───────────┐
+      ▼                  ▼           ▼           ▼
+┌────────────┐    ┌──────────┐ ┌──────────┐ ┌──────────┐
+│ Object     │    │  Gemini  │ │  OpenAI  │ │ Anthropic│
+│ store      │    │   API    │ │   API    │ │   API    │
+│ (S3/R2)    │    └──────────┘ └──────────┘ └──────────┘
+└────────────┘
+</code></pre>
+
+  <div class="callout clay"><strong>Load-bearing piece:</strong> the LLM Gateway. One adapter layer + one place for redaction, quotas, caching, failover. See §05.</div>
+</section>
+
+<!-- 3. COMPONENTS -->
+<section class="s" id="components">
+  <div class="sec-label">03 · Components</div>
+  <h2>What each piece is responsible for</h2>
+
+  <div class="g2">
+    <div class="card">
+      <h3 style="margin-top:0">Client <span class="badge b-sky" style="margin-left:6px">RN + RN Web</span></h3>
+      <p>One codebase, three targets. Expo Router native; Next.js for marketing. Server state via TanStack Query, UI state via Zustand. Brand tokens pulled from a shared <code>/packages/tokens/</code> — kit is source of truth.</p>
+      <p>Triple-Pillar editor is a <strong>custom form</strong> — three controlled fields plus optional Context attachments, not a rich-text editor.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">API Gateway / BFF <span class="badge b-dust" style="margin-left:6px">edge</span></h3>
+      <p>Hono on Cloudflare Workers <em>or</em> Next.js API routes. Terminates auth, rate-limits (60/min, burst 20), adds request IDs, forwards to services.</p>
+      <p><strong>Never</strong> calls LLM providers directly — always via the LLM Gateway.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Smart Paste <span class="badge b-clay" style="margin-left:6px">stateless</span></h3>
+      <p>Implements the four-stage Smart Paste flow from the infographic. Text/PDF/URL extraction → Intent Classifier (LLM, JSON-mode) → PII Sanity Check (Strict/Standard) → Pillar Mapping JSON. Persistence via Vault if user explicitly saves.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Architect / Triple-Pillar</h3>
+      <p>Owns Prompt Draft lifecycle. Validates 3-pillar completeness, runs Test Flight via the Gateway, scores risk (V2), produces export bundles.</p>
+      <p style="margin-top:8px"><code>empty → drafting → ready → flight_pending → flight_done → exported</code></p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Vault</h3>
+      <p>CRUD over <strong>My Good Stuff</strong> (private), <strong>Community Recipes</strong> (public, moderated), <strong>Favourites</strong>, Tags. Full-text + vector search via <code>pgvector</code>.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Identity <span class="badge b-lav" style="margin-left:6px">external</span></h3>
+      <p>Clerk or Auth0. Mobile + web sessions are painful to roll ourselves; social sign-in is table stakes; identity outsourcing frees us to focus on the BYOK key vault.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. DATA MODEL -->
+<section class="s" id="data">
+  <div class="sec-label">04 · Data Model</div>
+  <h2>Postgres + <code>pgvector</code></h2>
+  <p class="lede">Neon or Supabase. Embeddings on <code>vault_templates</code> for semantic search. <code>flight_runs</code> is the cost &amp; quota ledger. BYOK provider keys live in <code>model_keys</code> with envelope encryption.</p>
+
+<pre><code>users              prompt_drafts             vault_templates
+─────              ─────────────             ───────────────
+id (pk)            id (pk)                   id (pk)
+idp_sub            owner_id  → users         owner_id   → users (nullable)
+created_at         persona   text            visibility  enum(private|community)
+user_dna jsonb     task      text            title       text
+                   format    text            persona/task/format
+                   context_files  jsonb      variables   jsonb
+                   variables jsonb           tags        text[]
+                   state     enum            embedding   vector(1536)
+                   created_at, updated_at    fork_of     → vault_templates
+                                             created_at, updated_at
+
+flight_runs                   model_keys (BYOK)
+───────────                   ─────────────────
+id (pk)                       id (pk)
+draft_id  → prompt_drafts     owner_id → users
+provider  enum                provider enum
+model_id  text                ciphertext bytea  -- envelope encrypted
+input_tokens int              created_at
+output_tokens int             revoked_at
+latency_ms int
+risk_score numeric(3,2)
+output_text text
+created_at
+</code></pre>
+
+  <div class="callout"><strong>User DNA</strong> is a free-form JSONB — <code>{role, life_status, location, interests, default_persona}</code>. The infographic treats it as global context that auto-prefixes prompts; the schema treats it as opaque key/value the Architect renders into the system message.</div>
+</section>
+
+<!-- 5. LLM GATEWAY -->
+<section class="s" id="gateway">
+  <div class="sec-label">05 · LLM Gateway · The Load-Bearing Piece</div>
+  <h2>One gateway. <em>One adapter layer.</em></h2>
+  <p class="lede">All three internal services reach providers through this. Adding a fourth provider is one adapter, not a re-plumb. Provider quirks (system messages, JSON mode, image inputs) live inside the adapter — never leaked.</p>
+
+  <div class="g2">
+    <div class="card">
+      <h3 style="margin-top:0">Why a gateway</h3>
+      <p>One place for: <strong>PII redaction</strong> before egress · <strong>token cost</strong> attribution per user · <strong>per-user quotas</strong> · <strong>response caching</strong> for deterministic Test Flights · <strong>failover</strong> across providers.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Adapter contract</h3>
+      <p>Every adapter implements <code>complete()</code>, <code>stream()</code>, <code>embed()</code>, returns a normalised <code>{tokens_in, tokens_out, finish_reason, content, raw}</code>.</p>
+    </div>
+  </div>
+
+  <h3>Default routing (when user hasn't pinned a model)</h3>
+  <table class="gm">
+    <thead><tr><th>Job</th><th>Default model</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Intent classification</strong> (Smart Paste)</td><td>Gemini Flash <em>or</em> Claude Haiku</td><td>Cheap, fast, JSON mode reliable.</td></tr>
+      <tr><td><strong>Embeddings</strong></td><td>OpenAI <code>text-embedding-3-small</code></td><td>Cheapest 1536d for the use case.</td></tr>
+      <tr><td><strong>Test Flight</strong></td><td>User's selected model (Settings 4.0)</td><td>We're a multi-LLM tool — never silently swap on the user.</td></tr>
+      <tr><td><strong>Risk Score</strong> <span class="badge b-yellow">V2</span></td><td>Same provider as Test Flight, smaller sibling</td><td>Avoid confirmation bias from same model size.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 6. API SURFACE -->
+<section class="s" id="api">
+  <div class="sec-label">06 · API Surface</div>
+  <h2>REST/JSON, versioned at <code>/v1/</code></h2>
+  <p class="lede">Auth required on every route except marketing. Rate-limit <code>/v1/paste</code> and <code>/v1/flight</code> more strictly — they're the expensive ones.</p>
+
+  <table class="gm">
+    <thead><tr><th>Method</th><th>Path</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><strong>POST</strong></td><td><code>/v1/paste</code></td><td>Smart Paste: <code>{text?, pdf_url?, url?}</code> → Triple-Pillar suggestion.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/v1/drafts</code></td><td>Create draft from Smart Paste payload, scratch, or template.</td></tr>
+      <tr><td><strong>PATCH</strong></td><td><code>/v1/drafts/{id}</code></td><td>Update pillars / context / variables.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/v1/drafts/{id}/flight</code></td><td>Test Flight — runs against selected provider. <strong>SSE stream</strong> for tokens.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/v1/drafts/{id}/export</code></td><td>Returns export bundle (clipboard, deep links).</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/v1/vault</code></td><td>Save a template.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/v1/vault?q=&amp;tags=</code></td><td>Search My Good Stuff + favourites.</td></tr>
+      <tr><td><strong>GET</strong></td><td><code>/v1/community?q=</code></td><td>Search community recipes.</td></tr>
+      <tr><td><strong>POST</strong></td><td><code>/v1/keys</code></td><td>BYOK — store an encrypted provider key.</td></tr>
+      <tr><td><strong>GET / PUT</strong></td><td><code>/v1/me/dna</code></td><td>Read / write User DNA.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 7. SECURITY / PII -->
+<section class="s" id="security">
+  <div class="sec-label">07 · Security &amp; PII</div>
+  <h2>The pasted content is the threat surface</h2>
+  <p class="lede">Users will paste emails, contracts, drafts of personal letters. Treat the inbound content as a hot path.</p>
+
+  <div class="g2">
+    <div class="card">
+      <h3 style="margin-top:0">PII rules</h3>
+      <p><strong>Outbound:</strong> Sanity Check runs before every LLM call. Strict mode default for free tier; Standard opt-in per draft.</p>
+      <p><strong>Storage:</strong> <code>flight_runs.output_text</code> column-encrypted at rest. Never key by raw PII.</p>
+      <p><strong>Logging:</strong> structured logs redact known PII patterns. Drop request bodies above DEBUG level.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">BYOK</h3>
+      <p>User-supplied API keys: <strong>envelope encryption</strong>. A per-user data key (KMS-wrapped) wraps the actual provider key. Plaintext exists only inside the LLM Gateway process at call time. Never returned to client.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Auth</h3>
+      <p>IdP-issued JWTs, 15-minute access + refresh. CORS pinned to <code>gotmessy.com</code> + subdomains. CSRF: <code>SameSite=Lax</code> cookies, explicit Origin check on mutations.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Mobile considerations</h3>
+      <p>Triple-Pillar editor must be <strong>one-handed</strong>. The Drop accepts iOS/Android share-sheet input. Test Flight responses <strong>stream</strong> — no silent waits on mobile networks. Vault is read-cached for offline browse.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8. ROADMAP -->
+<section class="s" id="roadmap">
+  <div class="sec-label">08 · Build &amp; Release Roadmap</div>
+  <h2>Eight phases, explicit gates</h2>
+  <p class="lede">Each phase ships behind a feature flag, rolls to a percentage cohort, then GA. The product roadmap from the infographic; the engineering version below.</p>
+
+  <div style="background:#100E0B;border-radius:13px;border:1px solid rgba(255,255,255,.07);overflow:hidden;padding:8px 18px">
+    <div class="phase-row">
+      <div class="phase-num">0</div>
+      <div><div class="phase-name">Foundations</div><div class="phase-tag">Plumbing</div></div>
+      <div class="phase-desc">Repo scaffolding, IdP integration, design tokens shared package, CI on PRs.</div>
+      <div class="phase-exit">Auth round-trip works on web + native; tokens import in both apps.</div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-num">1</div>
+      <div><div class="phase-name">Architect MVP</div><div class="phase-tag">Critical · MVP</div></div>
+      <div class="phase-desc">Smart Paste (text only), Triple-Pillar editor, single-provider Test Flight, basic Vault save.</div>
+      <div class="phase-exit">Target user pastes an email, gets pillars, runs Test Flight, saves the result.</div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-num">2</div>
+      <div><div class="phase-name">Multi-LLM</div><div class="phase-tag">Differentiator</div></div>
+      <div class="phase-desc">LLM Gateway with all three providers, Settings model toggle, BYOK.</div>
+      <div class="phase-exit">User picks a provider in Settings; Test Flight uses it. BYOK round-trip works.</div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-num">3</div>
+      <div><div class="phase-name">Smart Paste full</div><div class="phase-tag">Input expansion</div></div>
+      <div class="phase-desc">PDF and URL inputs, Sanity Check (Strict + Standard), Intent Classifier production model.</div>
+      <div class="phase-exit">PDF + URL end-to-end; PII redaction validated against test corpus.</div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-num">4</div>
+      <div><div class="phase-name">Vault expansion</div><div class="phase-tag">Network effect</div></div>
+      <div class="phase-desc">Community Recipes (public + moderation), tags, semantic search via embeddings.</div>
+      <div class="phase-exit">A second user can discover and fork a public template.</div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-num">5</div>
+      <div><div class="phase-name">User DNA</div><div class="phase-tag">Personalisation</div></div>
+      <div class="phase-desc">Onboarding capture, persistence, auto-injection at flight time.</div>
+      <div class="phase-exit">DNA injection visibly improves outputs on a benchmark set.</div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-num">6</div>
+      <div><div class="phase-name">Risk scoring</div><div class="phase-tag">V2</div></div>
+      <div class="phase-desc">Hallucination Risk Score, citation extraction.</div>
+      <div class="phase-exit">Score rank-correlates with human eval on a held-out set.</div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-num">7</div>
+      <div><div class="phase-name">Life OS edition</div><div class="phase-tag">Out of scope</div></div>
+      <div class="phase-desc">Long-running workflows, scheduled prompts, share-sheet integration.</div>
+      <div class="phase-exit">Out of scope for this doc — re-design before starting.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. OBSERVABILITY + COST -->
+<section class="s" id="ops">
+  <div class="sec-label">09 · Observability &amp; Cost</div>
+  <h2>Trace one flight end-to-end</h2>
+  <div class="g2">
+    <div class="card">
+      <h3 style="margin-top:0">Observability</h3>
+      <p><strong>Tracing:</strong> OpenTelemetry, propagated client → BFF → service → Gateway. A Test Flight is one trace.</p>
+      <p><strong>Metrics:</strong> per-provider latency, token cost / user / day, Smart Paste pillar-detection success rate, flight failure rate.</p>
+      <p><strong>Errors:</strong> Sentry on client + server. Group by <code>idp_sub</code> — never store emails in error context.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Cost (rough, mid-tier model)</h3>
+      <table class="gm" style="margin:0">
+        <tbody>
+          <tr><td>Intent classification</td><td>500 in / 200 out</td><td>~$0.0015</td></tr>
+          <tr><td>Test Flight</td><td>800 in / 1.2k out</td><td>~$0.012</td></tr>
+          <tr><td>Embedding</td><td>500 in</td><td>~$0.00001</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px;font-size:.82rem">Free-tier user @ 20 flights/day ≈ <strong>$0.30/day</strong>. BYOK ≈ zero LLM cost — gateway compute + Postgres rows only. <em>That's why BYOK is Phase 2, not Phase 5.</em></p>
+    </div>
+  </div>
+</section>
+
+<!-- 10. OPEN QUESTIONS -->
+<section class="s" id="open">
+  <div class="sec-label">10 · Open Questions</div>
+  <h2>Decisions deliberately deferred</h2>
+  <p class="lede">Flag the trade-off when these surface — don't pick silently.</p>
+  <div class="g3">
+    <div class="tile"><h4>IdP</h4><p>Clerk vs Auth0 vs Supabase Auth. Lean Clerk for DX; pricing comparison at scale needed.</p></div>
+    <div class="tile"><h4>Hosting</h4><p>Cloudflare Workers + Neon, or single Vercel/Railway stack. Workers cheaper at scale, more friction for long jobs.</p></div>
+    <div class="tile"><h4>Mobile distribution</h4><p>Expo Go → EAS RN. App Store vs PWA-first is a product call.</p></div>
+    <div class="tile"><h4>Moderation</h4><p>Community Recipes: human review queue vs automated classifier with reports. Probably both, order matters.</p></div>
+    <div class="tile"><h4>Risk Score methodology</h4><p>Dual-model agreement, search-based fact-check, or human-eval-trained classifier. Different cost shapes.</p></div>
+    <div class="tile"><h4>Subscription tiers</h4><p>Free / Pro / Team — pricing not set. Impacts BYOK quota design.</p></div>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+  Got Messy · System Design · <span class="ver">v1.0</span> &middot; Counterpart to the App Architecture infographic
+</footer>
+
+</body>
+</html>
